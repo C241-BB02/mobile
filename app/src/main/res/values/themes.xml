@@ -2,8 +2,13 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.BlurredBasket" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+         <item name="colorPrimary">@color/blue_500</item>
     </style>
 
     <style name="Theme.BlurredBasket" parent="Base.Theme.BlurredBasket" />
+
+    <style name="CustomBottomSheetDialog" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="android:backgroundDimAmount">0.7</item>
+    </style>
+
 </resources>

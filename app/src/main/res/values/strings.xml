@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Blurred Basket</string>
+    <string name="application_name">Blurred Basket</string>
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="onboarding_title">Better product finding starts here.</string>
 </resources>
