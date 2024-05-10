@@ -1,12 +1,12 @@
 package com.c241bb02.blurredbasket.onboarding
 
-import android.os.Build
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
-import androidx.annotation.RequiresApi
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.c241bb02.blurredbasket.R
@@ -14,9 +14,8 @@ import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class OnboardingActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityOnboardingBinding
-    @RequiresApi(Build.VERSION_CODES.R)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
@@ -37,9 +36,30 @@ class OnboardingActivity : AppCompatActivity() {
         with(binding) {
             loginButton.setOnClickListener {
                 val dialog = BottomSheetDialog(this@OnboardingActivity, R.style.CustomBottomSheetDialog)
-                dialog.setContentView(R.layout.login_dialog)
+                val view = LayoutInflater.from(this@OnboardingActivity).inflate(R.layout.login_dialog, null)
+                dialog.setContentView(view)
+                setupLoginDialog(dialog, view)
                 dialog.show()
             }
+
+            registerButton.setOnClickListener {
+                val moveIntent = Intent(this@OnboardingActivity, RegisterActivity::class.java)
+                startActivity(moveIntent)
+            }
+
+        }
+    }
+
+    private fun setupLoginDialog(dialog: BottomSheetDialog, view: View) {
+        val loginTriggerButton = view.findViewById<Button>(R.id.login_trigger_button)
+        val emailInput = view.findViewById<EditText>(R.id.emailEditText)
+        val passwordInput = view.findViewById<EditText>(R.id.passwordEditText)
+
+        loginTriggerButton.setOnClickListener {
+            val email = emailInput.text.toString()
+            val password = passwordInput.text.toString()
+            // TODO: hit backend
+            // dialog.dismiss()
         }
     }
 }

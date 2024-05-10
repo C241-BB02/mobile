@@ -11,4 +11,14 @@
         <item name="android:backgroundDimAmount">0.7</item>
     </style>
 
+    <style name="Custom.EditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/input_bg</item>
+        <item name="android:textColor">@color/blue_900</item>
+        <item name="android:fontFamily">@font/rubik_regular</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:radius">8dp</item>
+    </style>
+
 </resources>

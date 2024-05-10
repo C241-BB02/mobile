@@ -125,7 +125,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="40dp"
-        android:backgroundTint="@color/blue_900"
+        android:backgroundTint="@color/blue_800"
         android:fontFamily="@font/rubik_regular"
         android:minWidth="150dp"
         android:paddingVertical="12dp"
