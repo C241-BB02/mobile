@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
+import com.c241bb02.blurredbasket.register.RegisterActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class OnboardingActivity : AppCompatActivity() {
