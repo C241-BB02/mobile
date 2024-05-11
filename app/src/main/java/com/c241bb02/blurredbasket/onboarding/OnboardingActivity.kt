@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
+import com.c241bb02.blurredbasket.home.HomeActivity
 import com.c241bb02.blurredbasket.register.RegisterActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
@@ -44,10 +45,8 @@ class OnboardingActivity : AppCompatActivity() {
             }
 
             registerButton.setOnClickListener {
-                val moveIntent = Intent(this@OnboardingActivity, RegisterActivity::class.java)
-                startActivity(moveIntent)
+                moveToRegisterScreen()
             }
-
         }
     }
 
@@ -60,7 +59,18 @@ class OnboardingActivity : AppCompatActivity() {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
             // TODO: hit backend
-            // dialog.dismiss()
+            moveToHomeScreen()
+            dialog.dismiss()
         }
+    }
+
+    private fun moveToRegisterScreen() {
+        val moveIntent = Intent(this, RegisterActivity::class.java)
+        startActivity(moveIntent)
+    }
+
+    private fun moveToHomeScreen() {
+        val moveIntent = Intent(this, HomeActivity::class.java)
+        startActivity(moveIntent)
     }
 }

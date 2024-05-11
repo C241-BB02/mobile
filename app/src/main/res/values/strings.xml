@@ -13,6 +13,12 @@
     <string name="register_form_title">Create a new account</string>
     <string name="back_button">Back Button</string>
     <string name="register_form_description">You are one more step from great products.</string>
+    <string name="home_carousel_image_content_description">Home Carousel Banner</string>
+    <string name="home_products_list_item_image_content_description">Product image</string>
+    <string name="product_title">Product Title</string>
+    <string name="product_description">Product Description</string>
+    <string name="products">Products</string>
+    <string name="create_product_button_content_description">Create Product Button</string>
 
     <string-array name="planets_array">
         <item>Seller</item>
