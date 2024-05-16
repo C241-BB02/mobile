@@ -4,10 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ArrayAdapter
 import android.widget.Spinner
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityRegisterBinding
+import com.c241bb02.blurredbasket.utils.setupStatusBar
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding
@@ -16,7 +15,7 @@ class RegisterActivity : AppCompatActivity() {
         binding = ActivityRegisterBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupStatusBar()
+        setupStatusBar(window, this, R.color.blue_50, true)
         setupButtons()
 
         val spinner: Spinner = findViewById(R.id.planets_spinner)
@@ -30,12 +29,6 @@ class RegisterActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupStatusBar() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.blue_50)
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = true
-        }
-    }
 
     private fun setupButtons() {
         with(binding) {

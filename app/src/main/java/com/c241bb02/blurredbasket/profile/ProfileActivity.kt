@@ -5,14 +5,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
-import android.widget.EditText
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.adapters.ProductsListAdapter
 import com.c241bb02.blurredbasket.api.Product
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
+import com.c241bb02.blurredbasket.utils.setupStatusBar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ProfileActivity : AppCompatActivity() {
@@ -23,16 +21,9 @@ class ProfileActivity : AppCompatActivity() {
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupStatusBar()
+        setupStatusBar(window, this, R.color.blue_900, false)
         setupButtons()
         setupSellerProductsList()
-    }
-
-    private fun setupStatusBar() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.blue_900)
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = false
-        }
     }
 
     private fun setupButtons() {

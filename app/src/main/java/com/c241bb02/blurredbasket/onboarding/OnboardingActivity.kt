@@ -13,6 +13,7 @@ import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
 import com.c241bb02.blurredbasket.home.HomeActivity
 import com.c241bb02.blurredbasket.register.RegisterActivity
+import com.c241bb02.blurredbasket.utils.setupStatusBar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class OnboardingActivity : AppCompatActivity() {
@@ -23,16 +24,10 @@ class OnboardingActivity : AppCompatActivity() {
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupStatusBar()
+        setupStatusBar(window, this, R.color.blue_100, true)
         setupButtons()
     }
 
-    private fun setupStatusBar() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.blue_100)
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = true
-        }
-    }
 
     private fun setupButtons() {
         with(binding) {

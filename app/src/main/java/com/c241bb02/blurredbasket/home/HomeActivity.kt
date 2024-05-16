@@ -3,14 +3,13 @@ package com.c241bb02.blurredbasket.home
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.adapters.ProductsListAdapter
 import com.c241bb02.blurredbasket.api.Product
 import com.c241bb02.blurredbasket.databinding.ActivityHomeBinding
 import com.c241bb02.blurredbasket.profile.ProfileActivity
+import com.c241bb02.blurredbasket.utils.setupStatusBar
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.HeroCarouselStrategy
@@ -24,7 +23,7 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setupStatusBar()
+        setupStatusBar(window, this, R.color.blue_50, true)
 
         val arrayList = ArrayList<String>()
 
@@ -87,13 +86,6 @@ class HomeActivity : AppCompatActivity() {
                 }
                 else -> false
             }
-        }
-    }
-
-    private fun setupStatusBar() {
-        window.statusBarColor = ContextCompat.getColor(this, R.color.blue_50)
-        WindowCompat.getInsetsController(window, window.decorView).apply {
-            isAppearanceLightStatusBars = true
         }
     }
 
