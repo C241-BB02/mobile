@@ -20,6 +20,11 @@
     <string name="products">Products</string>
     <string name="create_product_button_content_description">Create Product Button</string>
     <string name="profile">Profile</string>
+    <string name="description">Description</string>
+    <string name="seller_username">seller_username</string>
+    <string name="product_name">Product Name</string>
+    <string name="price_label">Price</string>
+    <string name="product_price">Product Price</string>
 
     <string-array name="planets_array">
         <item>Seller</item>
