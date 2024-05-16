@@ -2,8 +2,6 @@ package com.c241bb02.blurredbasket.register
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ArrayAdapter
-import android.widget.Spinner
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityRegisterBinding
 import com.c241bb02.blurredbasket.utils.setupStatusBar
@@ -17,16 +15,6 @@ class RegisterActivity : AppCompatActivity() {
 
         setupStatusBar(window, this, R.color.blue_50, true)
         setupButtons()
-
-        val spinner: Spinner = findViewById(R.id.planets_spinner)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.planets_array,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
     }
 
 

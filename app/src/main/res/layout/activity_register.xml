@@ -48,6 +48,43 @@
             android:layout_width="match_parent"
             android:layout_height="16dp" />
 
+        <TextView
+            android:text="I am registering as a..."
+            android:fontFamily="@font/rubik_medium"
+            android:textColor="@color/blue_900"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <RadioGroup
+            android:id="@+id/user_role_radio_group"
+            android:checkedButton="@+id/radio_button_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/customer_radio_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/rubik_regular"
+                android:textSize="18dp"
+                android:text="Customer"/>
+            <RadioButton
+                android:id="@+id/seller_radio_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/rubik_regular"
+                android:textSize="18dp"
+                android:text="Seller"/>
+        </RadioGroup>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
         <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -65,17 +102,6 @@
             style="@style/Custom.EditText"
             android:inputType="textEmailAddress"
             android:hint="@string/email"/>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp" />
-
-        <Spinner
-            android:id="@+id/planets_spinner"
-            android:background="@drawable/rounded_white_bg"
-            android:padding="12dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
 
         <Space
             android:layout_width="match_parent"
