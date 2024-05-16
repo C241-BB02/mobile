@@ -3,9 +3,9 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/accelerator"
+        android:id="@+id/profile_icon"
         android:iconTint="@color/blue_50"
         android:icon="@drawable/rounded_account_circle_24"
-        android:title="Test"
+        android:title="@string/profile"
         app:showAsAction="ifRoom"/>
 </menu>

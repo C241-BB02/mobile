@@ -12,13 +12,23 @@
     </style>
 
     <style name="Custom.EditText" parent="@android:style/Widget.EditText">
-        <item name="android:background">@drawable/input_bg</item>
+        <item name="android:background">@drawable/rounded_white_bg</item>
         <item name="android:textColor">@color/blue_900</item>
         <item name="android:fontFamily">@font/rubik_regular</item>
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingTop">10dp</item>
         <item name="android:paddingBottom">10dp</item>
         <item name="android:radius">8dp</item>
+    </style>
+
+    <style name="CustomChipFontFamily" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="android:fontFamily">@font/rubik_medium</item>
+    </style>
+
+    <style name="CustomChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/blue_200</item>
+        <item name="android:textColor">@color/blue_50</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
     </style>
 
 </resources>

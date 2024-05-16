@@ -1,4 +1,4 @@
-package com.c241bb02.blurredbasket.home
+package com.c241bb02.blurredbasket.adapters
 
 import android.net.Uri
 import android.view.LayoutInflater

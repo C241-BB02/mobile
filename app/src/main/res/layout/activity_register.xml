@@ -72,7 +72,7 @@
 
         <Spinner
             android:id="@+id/planets_spinner"
-            android:background="@drawable/input_bg"
+            android:background="@drawable/rounded_white_bg"
             android:padding="12dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
