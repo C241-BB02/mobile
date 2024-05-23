@@ -25,6 +25,7 @@
     <string name="product_name">Product Name</string>
     <string name="price_label">Price</string>
     <string name="product_price">Product Price</string>
+    <string name="carousel_image">Carousel image</string>
 
     <string-array name="planets_array">
         <item>Seller</item>

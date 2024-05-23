@@ -1,13 +1,20 @@
-package com.c241bb02.blurredbasket.home
+package com.c241bb02.blurredbasket.product_detail
 
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.databinding.CarouselListItemBinding
 
-class HomeCarouselAdapter(private val imageList: List<String>): RecyclerView.Adapter<HomeCarouselAdapter.ViewHolder>() {
+class ProductDetailCarouselAdapter(private val imageList: List<String>): RecyclerView.Adapter<ProductDetailCarouselAdapter.ViewHolder>() {
+    private lateinit var onItemClickCallback: OnItemClickCallback
+
+    fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
+        this.onItemClickCallback = onItemClickCallback
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = CarouselListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
@@ -29,7 +36,15 @@ class HomeCarouselAdapter(private val imageList: List<String>): RecyclerView.Ada
                 Glide.with(itemView.context)
                     .load(Uri.parse(image))
                     .into(homeCarouselItemImage)
+
+                itemView.setOnClickListener {
+                    onItemClickCallback.onItemClicked(it)
+                }
             }
         }
+    }
+
+    interface OnItemClickCallback {
+        fun onItemClicked(view: View)
     }
 }

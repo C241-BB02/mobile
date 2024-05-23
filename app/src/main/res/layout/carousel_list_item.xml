@@ -12,7 +12,7 @@
     app:shapeAppearance="?attr/shapeAppearanceCornerExtraLarge">
 
     <ImageView
-        android:contentDescription="@string/home_carousel_image_content_description"
+        android:contentDescription="@string/carousel_image"
         android:id="@+id/home_carousel_item_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
