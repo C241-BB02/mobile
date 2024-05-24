@@ -1,16 +1,16 @@
-package com.c241bb02.blurredbasket.profile
+package com.c241bb02.blurredbasket.ui.profile
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
-import com.c241bb02.blurredbasket.adapters.ProductsListAdapter
 import com.c241bb02.blurredbasket.api.Product
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
-import com.c241bb02.blurredbasket.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.home.ProductsListAdapter
+import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ProfileActivity : AppCompatActivity() {

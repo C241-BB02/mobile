@@ -1,4 +1,4 @@
-package com.c241bb02.blurredbasket.utils
+package com.c241bb02.blurredbasket.ui.utils
 
 import android.content.Context
 import android.view.Window

@@ -1,14 +1,15 @@
-package com.c241bb02.blurredbasket.product_detail
+package com.c241bb02.blurredbasket.ui.create_product
 
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
+import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.CarouselListItemBinding
 
-class ProductDetailCarouselAdapter(private val imageList: List<String>): RecyclerView.Adapter<ProductDetailCarouselAdapter.ViewHolder>() {
+class CreateProductCarouselAdapter(private val imageList: ArrayList<Uri>): RecyclerView.Adapter<CreateProductCarouselAdapter.ViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
@@ -22,6 +23,7 @@ class ProductDetailCarouselAdapter(private val imageList: List<String>): Recycle
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val image = imageList[position]
+        Log.d("BOLEHBOLEH", image.toString())
         holder.bind(image)
     }
 
@@ -29,16 +31,26 @@ class ProductDetailCarouselAdapter(private val imageList: List<String>): Recycle
         return imageList.size
     }
 
+    fun updateData(startIndex: Int, newImageList: ArrayList<Uri>) {
+        for (index in startIndex..<newImageList.size) {
+            imageList[index] = newImageList[index]
+        }
+        notifyItemRangeChanged(startIndex, newImageList.size)
+    }
 
     inner class ViewHolder(private val binding: CarouselListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(image: String) {
+        fun bind(image: Uri) {
             with(binding) {
-                Glide.with(itemView.context)
-                    .load(Uri.parse(image))
-                    .into(homeCarouselItemImage)
-
-                itemView.setOnClickListener {
-                    onItemClickCallback.onItemClicked(it)
+                if (image == Uri.EMPTY) {
+                    homeCarouselItemImage.setImageResource(R.drawable.ic_place_holder)
+                    itemView.setOnClickListener {
+                        onItemClickCallback.onItemClicked(it)
+                    }
+                } else {
+                    homeCarouselItemImage.setImageURI(image)
+                    itemView.setOnClickListener {
+                        onItemClickCallback.onDeleteClicked(it, layoutPosition)
+                    }
                 }
             }
         }
@@ -46,5 +58,6 @@ class ProductDetailCarouselAdapter(private val imageList: List<String>): Recycle
 
     interface OnItemClickCallback {
         fun onItemClicked(view: View)
+        fun onDeleteClicked(view: View, itemPosition: Int)
     }
 }

@@ -1,10 +1,10 @@
-package com.c241bb02.blurredbasket.register
+package com.c241bb02.blurredbasket.ui.register
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityRegisterBinding
-import com.c241bb02.blurredbasket.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRegisterBinding

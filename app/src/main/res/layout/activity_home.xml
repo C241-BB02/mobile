@@ -17,7 +17,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/blue_50"
-    tools:context=".home.HomeActivity">
+    tools:context=".ui.home.HomeActivity">
 
 
     <androidx.recyclerview.widget.RecyclerView
@@ -56,18 +56,23 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         style="@style/Widget.Material3.BottomAppBar"
+        android:backgroundTint="@color/blue_100"
         app:menu="@menu/bottom_app_bar"
         app:hideOnScroll="true"
-        android:backgroundTint="@color/blue_100"
         />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/create_product_cta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:srcCompat="@drawable/rounded_add_24"
+        app:icon="@drawable/rounded_add_24"
+        android:text="Create"
+        android:textSize="18sp"
         android:backgroundTint="@color/blue_800"
         app:layout_anchor="@id/bottom_app_bar"
-        app:tint="@color/blue_50"
+        app:iconTint="@color/blue_50"
+        android:fontFamily="@font/rubik_medium"
+        android:textColor="@color/blue_50"
         android:contentDescription="@string/create_product_button_content_description" />
 
 

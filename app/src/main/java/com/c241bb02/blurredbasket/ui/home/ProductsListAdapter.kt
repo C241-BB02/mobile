@@ -1,10 +1,9 @@
-package com.c241bb02.blurredbasket.adapters
+package com.c241bb02.blurredbasket.ui.home
 
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.api.Product

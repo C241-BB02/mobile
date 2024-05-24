@@ -1,20 +1,17 @@
-package com.c241bb02.blurredbasket.product_detail
+package com.c241bb02.blurredbasket.ui.product_detail
 
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
-import com.c241bb02.blurredbasket.adapters.ProductsListAdapter
 import com.c241bb02.blurredbasket.databinding.ActivityProductDetailBinding
-import com.c241bb02.blurredbasket.home.HomeCarouselAdapter
-import com.c241bb02.blurredbasket.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
-import com.google.android.material.carousel.FullScreenCarouselStrategy
 import com.google.android.material.carousel.HeroCarouselStrategy
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback

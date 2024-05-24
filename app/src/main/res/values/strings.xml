@@ -26,6 +26,7 @@
     <string name="price_label">Price</string>
     <string name="product_price">Product Price</string>
     <string name="carousel_image">Carousel image</string>
+    <string name="create_product_image_info">You must pick at least 3 images. You can pick up to 5 images.</string>
 
     <string-array name="planets_array">
         <item>Seller</item>

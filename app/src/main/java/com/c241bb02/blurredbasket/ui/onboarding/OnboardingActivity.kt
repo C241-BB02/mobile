@@ -1,4 +1,4 @@
-package com.c241bb02.blurredbasket.onboarding
+package com.c241bb02.blurredbasket.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,13 +7,11 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.WindowCompat
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
-import com.c241bb02.blurredbasket.home.HomeActivity
-import com.c241bb02.blurredbasket.register.RegisterActivity
-import com.c241bb02.blurredbasket.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.home.HomeActivity
+import com.c241bb02.blurredbasket.ui.register.RegisterActivity
+import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class OnboardingActivity : AppCompatActivity() {
