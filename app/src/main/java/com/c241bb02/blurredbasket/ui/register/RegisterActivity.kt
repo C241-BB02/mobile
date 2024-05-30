@@ -57,7 +57,7 @@ class RegisterActivity : AppCompatActivity() {
                     username = username,
                     email = email,
                     password = password,
-                    role = "ADMIN"
+                    role = role
                 )
 
                 if (registerInputIsValid(dto, confirmPassword)) {
