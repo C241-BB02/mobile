@@ -1,4 +1,4 @@
-package com.c241bb02.blurredbasket.ui.create_product
+package com.c241bb02.blurredbasket.ui.edit_product
 
 import android.net.Uri
 import android.view.LayoutInflater
@@ -8,7 +8,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.CarouselListItemBinding
 
-class CreateProductCarouselAdapter(private val imageList: ArrayList<Uri>): RecyclerView.Adapter<CreateProductCarouselAdapter.ViewHolder>() {
+class EditProductCarouselAdapter(private val imageList: ArrayList<Uri>): RecyclerView.Adapter<EditProductCarouselAdapter.ViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {

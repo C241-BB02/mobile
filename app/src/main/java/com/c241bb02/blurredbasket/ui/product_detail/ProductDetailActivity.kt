@@ -1,15 +1,23 @@
 package com.c241bb02.blurredbasket.ui.product_detail
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import android.widget.Button
+import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityProductDetailBinding
+import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
+import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
+import com.c241bb02.blurredbasket.ui.register.RegisterActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.HeroCarouselStrategy
@@ -27,6 +35,7 @@ class ProductDetailActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupStatusBar(window, this, R.color.white, true)
+        setupButtons()
         setupImageCarousel()
     }
 
@@ -57,6 +66,24 @@ class ProductDetailActivity : AppCompatActivity() {
         })
     }
 
+    private fun setupButtons() {
+        with(binding) {
+            productDetailBackButton.setOnClickListener {
+                onBackPressedDispatcher.onBackPressed()
+            }
+            productDetailEditButton.setOnClickListener {
+                moveToEditProductScreen()
+            }
+            productDetailDeleteButton.setOnClickListener {
+                val dialog = BottomSheetDialog(this@ProductDetailActivity, R.style.CustomBottomSheetDialog)
+                val view = LayoutInflater.from(this@ProductDetailActivity).inflate(R.layout.delete_product_dialog, null)
+                dialog.setContentView(view)
+                setupDeleteProductDialog(dialog, view)
+                dialog.show()
+            }
+        }
+    }
+
     private fun openImageViewer(images: List<String>) {
         StfalconImageViewer.Builder(this, images) { view, image ->
             Glide.with(view.context)
@@ -65,6 +92,30 @@ class ProductDetailActivity : AppCompatActivity() {
         }
             .withBackgroundColor(ContextCompat.getColor(this, R.color.blue_100))
             .show()
+    }
+
+    private fun setupDeleteProductDialog(dialog: BottomSheetDialog, view: View) {
+        val deleteTriggerButton = view.findViewById<Button>(R.id.delete_trigger_button)
+        val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
+
+        deleteTriggerButton.setOnClickListener {
+            // TODO: hit backend
+            moveToProfileScreen()
+            dialog.dismiss()
+        }
+        cancelDeleteTriggerButton.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+
+    private fun moveToEditProductScreen() {
+        val intent = Intent(this, EditProductActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun moveToProfileScreen() {
+        val moveIntent = Intent(this, ProfileActivity::class.java)
+        startActivity(moveIntent)
     }
 
     private fun setupTransition() {
