@@ -1,28 +1,37 @@
 package com.c241bb02.blurredbasket.ui.profile
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.Product
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
+import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.home.ProductsListAdapter
+import com.c241bb02.blurredbasket.ui.onboarding.OnboardingViewModel
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
+    private lateinit var viewModel: ProfileViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = obtainViewModel(this)
+
         setupStatusBar(window, this, R.color.blue_900, false)
         setupButtons()
+        setupUserData()
         setupSellerProductsList()
     }
 
@@ -41,6 +50,15 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
+    private fun setupUserData() {
+        viewModel.getSession().observe(this) { user ->
+            with(binding) {
+                userProfileRoleChip.text = user.role
+                userProfileUsername.text = user.username
+                userProfileEmail.text = user.email
+            }
+        }
+    }
 
     private fun setupLogoutDialog(dialog: BottomSheetDialog, view: View) {
         val logoutTriggerButton = view.findViewById<Button>(R.id.logout_trigger_button)
@@ -68,5 +86,10 @@ class ProfileActivity : AppCompatActivity() {
 
         productsView.layoutManager = GridLayoutManager(this, 2)
         productsView.adapter = productsAdapter
+    }
+
+    private fun obtainViewModel(activity: AppCompatActivity): ProfileViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[ProfileViewModel::class.java]
     }
 }

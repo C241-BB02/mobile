@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.c241bb02.blurredbasket.data.repository.UserRepository
 import com.c241bb02.blurredbasket.di.Injection
 import com.c241bb02.blurredbasket.ui.onboarding.OnboardingViewModel
+import com.c241bb02.blurredbasket.ui.profile.ProfileViewModel
 import com.c241bb02.blurredbasket.ui.register.RegisterViewModel
 
 class ViewModelFactory private constructor(private val userRepository: UserRepository) :
@@ -17,6 +18,9 @@ class ViewModelFactory private constructor(private val userRepository: UserRepos
         }
         if (modelClass.isAssignableFrom(RegisterViewModel::class.java)) {
             return RegisterViewModel(userRepository) as T
+        }
+        if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            return ProfileViewModel(userRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }
