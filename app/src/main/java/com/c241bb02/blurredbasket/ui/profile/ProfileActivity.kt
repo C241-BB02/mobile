@@ -2,6 +2,7 @@ package com.c241bb02.blurredbasket.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -57,8 +58,9 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun setupUserData() {
         viewModel.getSession().observe(this) { user ->
+            Log.d("weyyy", user.toString())
             with(binding) {
-                userProfileRoleChip.text = user.role
+                userProfileRoleChip.text = user.role.lowercase().replaceFirstChar { it.uppercase() }
                 userProfileUsername.text = user.username
                 userProfileEmail.text = user.email
             }
@@ -76,6 +78,7 @@ class ProfileActivity : AppCompatActivity() {
                     moveToOnboardingScreen()
                     dialog.dismiss()
                     showToast("Logout successful!")
+                    finish()
                 } catch (e: Error) {
                     showToast("An error occurred while logging out. Please try again.")
                 }

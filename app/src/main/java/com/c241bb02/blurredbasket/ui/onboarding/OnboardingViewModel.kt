@@ -1,5 +1,6 @@
 package com.c241bb02.blurredbasket.ui.onboarding
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
@@ -18,6 +19,7 @@ class OnboardingViewModel(private val userRepository: UserRepository): ViewModel
         val response =  userRepository.login(dto)
 
         viewModelScope.launch {
+            Log.d("weyyyy", response.toString())
             val user = UserModel(
                 email = response.email ?: "",
                 token = response.access ?: "",
