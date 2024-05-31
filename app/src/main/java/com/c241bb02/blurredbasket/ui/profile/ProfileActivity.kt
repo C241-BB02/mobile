@@ -5,18 +5,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.Product
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.home.ProductsListAdapter
+import com.c241bb02.blurredbasket.ui.onboarding.OnboardingActivity
 import com.c241bb02.blurredbasket.ui.onboarding.OnboardingViewModel
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
@@ -65,7 +70,16 @@ class ProfileActivity : AppCompatActivity() {
         val cancelLogoutButton = view.findViewById<Button>(R.id.cancel_logout_trigger_button)
 
         logoutTriggerButton.setOnClickListener {
-            // TODO: hit backend
+            lifecycleScope.launch {
+                try {
+                    viewModel.logout()
+                    moveToOnboardingScreen()
+                    dialog.dismiss()
+                    showToast("Logout successful!")
+                } catch (e: Error) {
+                    showToast("An error occurred while logging out. Please try again.")
+                }
+            }
         }
 
         cancelLogoutButton.setOnClickListener {
@@ -86,6 +100,15 @@ class ProfileActivity : AppCompatActivity() {
 
         productsView.layoutManager = GridLayoutManager(this, 2)
         productsView.adapter = productsAdapter
+    }
+
+    private fun moveToOnboardingScreen() {
+        val moveIntent = Intent(this, OnboardingActivity::class.java)
+        startActivity(moveIntent)
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): ProfileViewModel {

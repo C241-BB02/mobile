@@ -10,4 +10,8 @@ class ProfileViewModel(private val userRepository: UserRepository): ViewModel() 
     fun getSession(): LiveData<UserModel> {
         return userRepository.getSession().asLiveData()
     }
+
+    suspend fun logout() {
+        userRepository.logout()
+    }
 }
