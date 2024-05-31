@@ -58,7 +58,6 @@ class ProfileActivity : AppCompatActivity() {
 
     private fun setupUserData() {
         viewModel.getSession().observe(this) { user ->
-            Log.d("weyyy", user.toString())
             with(binding) {
                 userProfileRoleChip.text = user.role.lowercase().replaceFirstChar { it.uppercase() }
                 userProfileUsername.text = user.username

@@ -10,13 +10,16 @@ import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityProductDetailBinding
 import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
+import com.c241bb02.blurredbasket.ui.profile.ProfileViewModel
 import com.c241bb02.blurredbasket.ui.register.RegisterActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
@@ -27,6 +30,7 @@ import com.stfalcon.imageviewer.StfalconImageViewer
 
 class ProductDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProductDetailBinding
+    private lateinit var viewModel: ProductDetailViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         setupTransition()
 
@@ -34,7 +38,10 @@ class ProductDetailActivity : AppCompatActivity() {
         binding = ActivityProductDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = obtainViewModel(this)
+
         setupStatusBar(window, this, R.color.white, true)
+        handleRoleBasedButtons()
         setupButtons()
         setupImageCarousel()
     }
@@ -80,6 +87,17 @@ class ProductDetailActivity : AppCompatActivity() {
                 dialog.setContentView(view)
                 setupDeleteProductDialog(dialog, view)
                 dialog.show()
+            }
+        }
+    }
+
+    private fun handleRoleBasedButtons() {
+        viewModel.getSession().observe(this) { user ->
+            with(binding) {
+                if (user.role == "CUSTOMER") {
+                    productDetailEditButton.visibility = View.GONE
+                    productDetailDeleteButton.visibility = View.GONE
+                }
             }
         }
     }
@@ -133,5 +151,10 @@ class ProductDetailActivity : AppCompatActivity() {
             addTarget(android.R.id.content)
             duration = 400L
         }
+    }
+
+    private fun obtainViewModel(activity: AppCompatActivity): ProductDetailViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[ProductDetailViewModel::class.java]
     }
 }

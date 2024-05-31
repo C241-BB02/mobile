@@ -19,7 +19,6 @@ class OnboardingViewModel(private val userRepository: UserRepository): ViewModel
         val response =  userRepository.login(dto)
 
         viewModelScope.launch {
-            Log.d("weyyyy", response.toString())
             val user = UserModel(
                 email = response.email ?: "",
                 token = response.access ?: "",
