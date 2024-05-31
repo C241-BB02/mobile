@@ -6,24 +6,49 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
+import com.c241bb02.blurredbasket.api.auth.LoginRequestDto
+import com.c241bb02.blurredbasket.api.auth.RegisterRequestDto
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.register.RegisterActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.android.material.snackbar.Snackbar
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class OnboardingActivity : AppCompatActivity() {
     private lateinit var binding: ActivityOnboardingBinding
+    private lateinit var viewModel: OnboardingViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityOnboardingBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = obtainViewModel(this)
+
         setupStatusBar(window, this, R.color.blue_100, true)
+        observeUserState()
         setupButtons()
+    }
+
+    private fun observeUserState() {
+        viewModel.getSession().observe(this) { user ->
+            if (user.token != "") {
+                val factory = ViewModelFactory.getInstance(this)
+                factory.updateToken(user.token)
+                val intent = Intent(this, HomeActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
+        }
     }
 
 
@@ -45,17 +70,48 @@ class OnboardingActivity : AppCompatActivity() {
 
     private fun setupLoginDialog(dialog: BottomSheetDialog, view: View) {
         val loginTriggerButton = view.findViewById<Button>(R.id.login_trigger_button)
-        val emailInput = view.findViewById<EditText>(R.id.emailEditText)
+        val usernameInput = view.findViewById<EditText>(R.id.usernameEditText)
         val passwordInput = view.findViewById<EditText>(R.id.passwordEditText)
 
         loginTriggerButton.setOnClickListener {
-            val email = emailInput.text.toString()
-            val password = passwordInput.text.toString()
-            // TODO: hit backend
-            moveToHomeScreen()
-            dialog.dismiss()
+            val username = usernameInput.text.toString().trim()
+            val password = passwordInput.text.toString().trim()
+            val dto = LoginRequestDto(
+                username = username,
+                password = password
+            )
+
+            if (loginInputIsValid(dto)) {
+                lifecycleScope.launch {
+                    try {
+                        viewModel.login(dto)
+                        moveToHomeScreen()
+                        dialog.dismiss()
+                        showToast("Login successful!")
+                    } catch (e: HttpException) {
+                        showToast("An error occurred while logging in. Please try again.")
+                    }
+                }
+            }
         }
     }
+
+    private fun loginInputIsValid(dto: LoginRequestDto): Boolean {
+        if (dto.username.isEmpty()) {
+            showToast("Please input a username")
+            return false
+        }
+        if (dto.password.isEmpty()) {
+            showToast("Password cannot be empty")
+            return false
+        }
+        return true
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    }
+
 
     private fun moveToRegisterScreen() {
         val moveIntent = Intent(this, RegisterActivity::class.java)
@@ -65,5 +121,10 @@ class OnboardingActivity : AppCompatActivity() {
     private fun moveToHomeScreen() {
         val moveIntent = Intent(this, HomeActivity::class.java)
         startActivity(moveIntent)
+    }
+
+    private fun obtainViewModel(activity: AppCompatActivity): OnboardingViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[OnboardingViewModel::class.java]
     }
 }

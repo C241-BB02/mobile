@@ -47,7 +47,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline8" />
 
     <EditText
-        android:id="@+id/emailEditText"
+        android:id="@+id/usernameEditText"
         android:background="@drawable/rounded_white_bg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -55,8 +55,8 @@
         android:layout_marginHorizontal="40dp"
         android:layout_marginTop="16dp"
         android:inputType="textEmailAddress"
-        android:hint="@string/email"
-        android:autofillHints="emailAddress"
+        android:hint="Username"
+        android:autofillHints="text"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <EditText
@@ -69,7 +69,7 @@
         android:layout_marginTop="16dp"
         android:inputType="textPassword"
         android:hint="@string/password"
-        app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+        app:layout_constraintTop_toBottomOf="@+id/usernameEditText" />
 
     <Button
         android:backgroundTint="@color/blue_800"

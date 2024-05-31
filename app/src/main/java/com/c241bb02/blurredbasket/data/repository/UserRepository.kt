@@ -2,6 +2,8 @@ package com.c241bb02.blurredbasket.data.repository
 
 import com.c241bb02.blurredbasket.api.ApiConfig
 import com.c241bb02.blurredbasket.api.ApiService
+import com.c241bb02.blurredbasket.api.auth.LoginRequestDto
+import com.c241bb02.blurredbasket.api.auth.LoginResponse
 import com.c241bb02.blurredbasket.api.auth.RegisterRequestDto
 import com.c241bb02.blurredbasket.api.auth.RegisterResponse
 import com.c241bb02.blurredbasket.data.pref.UserModel
@@ -25,6 +27,12 @@ class UserRepository private constructor(
         dto: RegisterRequestDto
     ): RegisterResponse {
         return apiService.register(dto)
+    }
+
+    suspend fun login(
+        dto: LoginRequestDto
+    ): LoginResponse {
+        return apiService.login(dto)
     }
 
     suspend fun logout() {
