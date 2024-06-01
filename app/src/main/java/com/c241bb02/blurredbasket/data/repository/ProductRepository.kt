@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.c241bb02.blurredbasket.api.ApiConfig
 import com.c241bb02.blurredbasket.api.ApiService
+import com.c241bb02.blurredbasket.api.product.DeleteProductResponse
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.data.pref.UserPreference
 import retrofit2.Call
@@ -84,6 +85,10 @@ class ProductRepository(
         return sellerProducts
     }
 
+    suspend fun deleteProduct(productCode: String): DeleteProductResponse {
+        return apiService.deleteProduct(productCode)
+    }
+
     fun updateToken(token: String) {
         apiService = ApiConfig.getApiService(token)
     }
@@ -95,7 +100,6 @@ class ProductRepository(
         private var instance: ProductRepository? = null
         fun getInstance(
             apiService: ApiService,
-            pref: UserPreference,
         ): ProductRepository =
             instance ?: synchronized(this) {
                 instance ?: ProductRepository(apiService)

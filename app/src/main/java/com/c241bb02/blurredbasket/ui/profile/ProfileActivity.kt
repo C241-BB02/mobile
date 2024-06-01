@@ -110,7 +110,6 @@ class ProfileActivity : AppCompatActivity() {
         viewModel.getSession().observe(this) { user ->
             if (user != null && user.role == "SELLER") {
                 viewModel.getSellerProducts(user.id).observe(this) { products ->
-                    Log.d("WEYYYY", products.toString())
                     if (products != null) {
                         val productsView = binding.sellerProductsList
                         val productsAdapter = ProductsListAdapter(products)

@@ -112,7 +112,6 @@ class OnboardingActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
-
     private fun moveToRegisterScreen() {
         val moveIntent = Intent(this, RegisterActivity::class.java)
         startActivity(moveIntent)

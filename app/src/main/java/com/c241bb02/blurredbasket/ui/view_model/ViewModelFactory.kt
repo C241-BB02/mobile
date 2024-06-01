@@ -28,7 +28,7 @@ class ViewModelFactory private constructor(
             return ProfileViewModel(userRepository, productRepository) as T
         }
         if (modelClass.isAssignableFrom(ProductDetailViewModel::class.java)) {
-            return ProductDetailViewModel(userRepository) as T
+            return ProductDetailViewModel(userRepository, productRepository) as T
         }
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             return HomeViewModel(productRepository) as T
@@ -40,6 +40,7 @@ class ViewModelFactory private constructor(
         userRepository.updateToken(token)
         productRepository.updateToken(token)
     }
+
     companion object {
         @Volatile
         private var instance: ViewModelFactory? = null

@@ -9,9 +9,11 @@ import android.view.View
 import android.view.Window
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
@@ -30,6 +32,8 @@ import com.google.android.material.carousel.HeroCarouselStrategy
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.stfalcon.imageviewer.StfalconImageViewer
+import kotlinx.coroutines.launch
+import retrofit2.HttpException
 
 class ProductDetailActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProductDetailBinding
@@ -140,16 +144,28 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun setupDeleteProductDialog(dialog: BottomSheetDialog, view: View) {
-        val deleteTriggerButton = view.findViewById<Button>(R.id.delete_trigger_button)
-        val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
+        val product = getProductParcelableExtra()
 
-        deleteTriggerButton.setOnClickListener {
-            // TODO: hit backend
-            moveToProfileScreen()
-            dialog.dismiss()
-        }
-        cancelDeleteTriggerButton.setOnClickListener {
-            dialog.dismiss()
+        if (product != null) {
+            val deleteTriggerButton = view.findViewById<Button>(R.id.delete_trigger_button)
+            val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
+
+            deleteTriggerButton.setOnClickListener {
+                try {
+                    lifecycleScope.launch {
+                        viewModel.deleteProduct(product.code ?: "")
+                        showToast("Product successfully deleted.")
+                        moveToProfileScreen()
+                        dialog.dismiss()
+                    }
+                } catch (e: HttpException) {
+                    showToast("An error occurred while deleting the product. Please try again.")
+                }
+
+            }
+            cancelDeleteTriggerButton.setOnClickListener {
+                dialog.dismiss()
+            }
         }
     }
 
@@ -178,6 +194,10 @@ class ProductDetailActivity : AppCompatActivity() {
             addTarget(android.R.id.content)
             duration = 400L
         }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): ProductDetailViewModel {
