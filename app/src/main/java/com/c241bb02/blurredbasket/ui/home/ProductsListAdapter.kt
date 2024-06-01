@@ -6,10 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.c241bb02.blurredbasket.api.Product
+import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.HomeProductsListItemBinding
 
-class ProductsListAdapter(private val list: List<Product>): RecyclerView.Adapter<ProductsListAdapter.ViewHolder>() {
+class ProductsListAdapter(private val list: List<GetProductsResponseItem>): RecyclerView.Adapter<ProductsListAdapter.ViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
@@ -31,24 +31,23 @@ class ProductsListAdapter(private val list: List<Product>): RecyclerView.Adapter
     }
 
     inner class ViewHolder(private val binding: HomeProductsListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(product: Product) {
-            val (id, name, description, image) = product
+        fun bind(product: GetProductsResponseItem) {
             with(binding) {
                 Glide.with(itemView.context)
-                    .load(Uri.parse(image))
+                    .load(Uri.parse(product.photos[0].image))
                     .into(homeProductsItemImage)
 
-                homeProductsItemName.text = name
-                homeProductsItemDescription.text = description
+                homeProductsItemName.text = product.name
+                homeProductsItemDescription.text = product.status
 
                 itemView.setOnClickListener {
-                    onItemClickCallback.onItemClicked(it)
+                    onItemClickCallback.onItemClicked(product, it)
                 }
             }
         }
     }
 
     interface OnItemClickCallback {
-        fun onItemClicked(view: View)
+        fun onItemClicked(product: GetProductsResponseItem, view: View)
     }
 }

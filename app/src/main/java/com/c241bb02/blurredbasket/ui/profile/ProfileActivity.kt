@@ -1,6 +1,8 @@
 package com.c241bb02.blurredbasket.ui.profile
 
+import android.app.ActivityOptions
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,18 +13,17 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
-import com.c241bb02.blurredbasket.api.Product
+import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
-import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.home.ProductsListAdapter
 import com.c241bb02.blurredbasket.ui.onboarding.OnboardingActivity
-import com.c241bb02.blurredbasket.ui.onboarding.OnboardingViewModel
+import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import kotlinx.coroutines.launch
-import retrofit2.HttpException
 
 class ProfileActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileBinding
@@ -38,8 +39,10 @@ class ProfileActivity : AppCompatActivity() {
         setupStatusBar(window, this, R.color.blue_900, false)
         setupButtons()
         setupUserData()
+        handleRoleBasedComponents()
         setupSellerProductsList()
     }
+
 
     private fun setupButtons() {
         with(binding) {
@@ -59,9 +62,23 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupUserData() {
         viewModel.getSession().observe(this) { user ->
             with(binding) {
+                Glide.with(this@ProfileActivity)
+                    .load(Uri.parse(BASE_PROFILE_PICTURE))
+                    .into(userProfilePicture)
                 userProfileRoleChip.text = user.role.lowercase().replaceFirstChar { it.uppercase() }
                 userProfileUsername.text = user.username
                 userProfileEmail.text = user.email
+            }
+        }
+    }
+
+    private fun handleRoleBasedComponents() {
+        viewModel.getSession().observe(this) { user ->
+            with(binding) {
+                if (user.role == "CUSTOMER") {
+                    sellerProductsHeader.visibility = View.GONE
+                    sellerProductsList.visibility = View.GONE
+                }
             }
         }
     }
@@ -88,20 +105,40 @@ class ProfileActivity : AppCompatActivity() {
             dialog.dismiss()
         }
     }
+
     private fun setupSellerProductsList() {
-        val arrayList2 = ArrayList<Product>()
+        viewModel.getSession().observe(this) { user ->
+            if (user != null && user.role == "SELLER") {
+                viewModel.getSellerProducts(user.id).observe(this) { products ->
+                    Log.d("WEYYYY", products.toString())
+                    if (products != null) {
+                        val productsView = binding.sellerProductsList
+                        val productsAdapter = ProductsListAdapter(products)
 
-        arrayList2.add(Product(id="1", name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692862582645-3b6fd47b7513?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList2.add(Product(id="2",name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692862582645-3b6fd47b7513?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList2.add(Product(id="3",name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692584927805-d4096552a5ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Nnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList2.add(Product(id="4",name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692584927805-d4096552a5ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Nnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList2.add(Product(id="5",name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692854236272-cc49076a2629?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
+                        productsView.layoutManager = GridLayoutManager(this, 2)
+                        productsView.adapter = productsAdapter
+                        productsAdapter.setOnItemClickCallback(object :
+                            ProductsListAdapter.OnItemClickCallback {
+                            override fun onItemClicked(product: GetProductsResponseItem, view: View) {
+                                moveToProductDetailScreen(product, view)
+                            }
+                        })
+                    }
+                }
+            }
+        }
+    }
 
-        val productsView = binding.sellerProductsList
-        val productsAdapter = ProductsListAdapter(arrayList2)
+    private fun moveToProductDetailScreen(product: GetProductsResponseItem, view: View) {
+        val moveIntent = Intent(this, ProductDetailActivity::class.java)
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
+        val options = ActivityOptions.makeSceneTransitionAnimation(
+            this,
+            view,
+            "shared_element_container"
+        )
 
-        productsView.layoutManager = GridLayoutManager(this, 2)
-        productsView.adapter = productsAdapter
+        startActivity(moveIntent, options.toBundle())
     }
 
     private fun moveToOnboardingScreen() {
@@ -116,5 +153,9 @@ class ProfileActivity : AppCompatActivity() {
     private fun obtainViewModel(activity: AppCompatActivity): ProfileViewModel {
         val factory = ViewModelFactory.getInstance(activity.application)
         return ViewModelProvider(activity, factory)[ProfileViewModel::class.java]
+    }
+
+    companion object {
+        const val BASE_PROFILE_PICTURE = "https://images.unsplash.com/photo-1605106702842-01a887a31122?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
 }

@@ -20,6 +20,7 @@ class OnboardingViewModel(private val userRepository: UserRepository): ViewModel
 
         viewModelScope.launch {
             val user = UserModel(
+                id = response.id ?: "",
                 email = response.email ?: "",
                 token = response.access ?: "",
                 username = response.username ?: "",

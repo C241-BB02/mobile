@@ -6,14 +6,16 @@ import android.os.Bundle
 import android.view.View
 import android.view.Window
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
-import com.c241bb02.blurredbasket.api.Product
+import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.ActivityHomeBinding
 import com.c241bb02.blurredbasket.ui.create_product.CreateProductActivity
 import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.HeroCarouselStrategy
@@ -21,8 +23,9 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 
 
 class HomeActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityHomeBinding
+    private lateinit var viewModel: HomeViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setupTransition()
 
@@ -30,21 +33,25 @@ class HomeActivity : AppCompatActivity() {
         binding = ActivityHomeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = obtainViewModel(this)
+
         setupStatusBar(window, this, R.color.blue_50, true)
         setupBannerCarousel()
-        setupProductsList()
+        observeProducts()
         setupBottomAppBar()
     }
 
-    private fun setupBannerCarousel() {
-        val arrayList = ArrayList<String>()
+    override fun onResume() {
+        super.onResume()
+        observeProducts()
+    }
 
-        arrayList.add("https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        arrayList.add("https://images.unsplash.com/photo-1692862582645-3b6fd47b7513?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        arrayList.add("https://images.unsplash.com/photo-1692584927805-d4096552a5ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Nnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        arrayList.add("https://images.unsplash.com/photo-1692854236272-cc49076a2629?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60")
-        arrayList.add("https://images.unsplash.com/photo-1681207751526-a091f2c6a538?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyODF8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60")
-        arrayList.add("https://images.unsplash.com/photo-1692610365998-c628604f5d9f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyODZ8fHxlbnwwfHx8fHw%3D&auto=format&fit=crop&w=500&q=60")
+    private fun setupBannerCarousel() {
+        val arrayList = listOf(
+            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        )
 
         val carouselView = binding.homeCarouselRecyclerView
         val adapter = HomeCarouselAdapter(arrayList)
@@ -59,25 +66,23 @@ class HomeActivity : AppCompatActivity() {
         carouselView.adapter = adapter
     }
 
-    private fun setupProductsList() {
-        val arrayList = ArrayList<Product>()
+    private fun observeProducts() {
+       viewModel.getProducts().observe(this) { products ->
+           if (products != null) {
+               val productsView = binding.homeProductsRecyclerView
+               val productsAdapter = ProductsListAdapter(products)
 
-        arrayList.add(Product(id = "1", name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692862582645-3b6fd47b7513?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList.add(Product(id = "2", name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692862582645-3b6fd47b7513?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList.add(Product(id = "3", name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692584927805-d4096552a5ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Nnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList.add(Product(id = "4", name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692584927805-d4096552a5ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw0Nnx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
-        arrayList.add(Product(id = "5", name = "Sayur", description = "asdkadsk", image = "https://images.unsplash.com/photo-1692854236272-cc49076a2629?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw1MXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60"))
+               productsView.layoutManager = GridLayoutManager(this, 2)
+               productsView.adapter = productsAdapter
+               productsAdapter.setOnItemClickCallback(object :
+                   ProductsListAdapter.OnItemClickCallback {
+                   override fun onItemClicked(product: GetProductsResponseItem, view: View) {
+                       moveToProductDetailScreen(product, view)
+                   }
+               })
+           }
+       }
 
-        val productsView = binding.homeProductsRecyclerView
-        val productsAdapter = ProductsListAdapter(arrayList)
-
-        productsView.layoutManager = GridLayoutManager(this, 2)
-        productsView.adapter = productsAdapter
-        productsAdapter.setOnItemClickCallback(object: ProductsListAdapter.OnItemClickCallback {
-            override fun onItemClicked(view: View) {
-                moveToProductDetailScreen(view)
-            }
-        })
     }
 
     private fun setupBottomAppBar() {
@@ -117,9 +122,9 @@ class HomeActivity : AppCompatActivity() {
         startActivity(moveIntent)
     }
 
-    private fun moveToProductDetailScreen(view: View) {
+    private fun moveToProductDetailScreen(product: GetProductsResponseItem, view: View) {
         val moveIntent = Intent(this, ProductDetailActivity::class.java)
-
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
         val options = ActivityOptions.makeSceneTransitionAnimation(
             this,
             view,
@@ -127,5 +132,10 @@ class HomeActivity : AppCompatActivity() {
         )
 
         startActivity(moveIntent, options.toBundle())
+    }
+
+    private fun obtainViewModel(activity: AppCompatActivity): HomeViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[HomeViewModel::class.java]
     }
 }

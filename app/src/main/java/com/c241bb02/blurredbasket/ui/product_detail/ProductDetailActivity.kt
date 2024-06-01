@@ -2,6 +2,7 @@ package com.c241bb02.blurredbasket.ui.product_detail
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
+import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.ActivityProductDetailBinding
 import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
@@ -23,6 +25,7 @@ import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
+import com.google.android.material.carousel.FullScreenCarouselStrategy
 import com.google.android.material.carousel.HeroCarouselStrategy
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
@@ -44,33 +47,55 @@ class ProductDetailActivity : AppCompatActivity() {
         handleRoleBasedButtons()
         setupButtons()
         setupImageCarousel()
+        setupProductDetails()
     }
 
     private fun setupImageCarousel(){
-        val images = listOf(
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            )
+        val product = getProductParcelableExtra()
 
-        val carouselView = binding.productDetailImageCarousel
-        val adapter = ProductDetailCarouselAdapter(images)
+        if (product != null) {
+            val images = product.photos.map { it.image }
+            val carouselView = binding.productDetailImageCarousel
+            val adapter = ProductDetailCarouselAdapter(images)
 
-        val snapHelper = CarouselSnapHelper()
-        snapHelper.attachToRecyclerView(carouselView)
+            val snapHelper = CarouselSnapHelper()
+            snapHelper.attachToRecyclerView(carouselView)
+            val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
+            carouselLayoutManager.carouselAlignment = CarouselLayoutManager.ALIGNMENT_CENTER
 
-        val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
-        carouselLayoutManager.carouselAlignment = CarouselLayoutManager.ALIGNMENT_CENTER
+            carouselView.layoutManager = carouselLayoutManager
+            carouselView.adapter = adapter
+            adapter.setOnItemClickCallback(object: ProductDetailCarouselAdapter.OnItemClickCallback {
+                override fun onItemClicked(view: View) {
+                    openImageViewer(images)
+                }
+            })
+        }
+    }
 
-        carouselView.layoutManager = carouselLayoutManager
-        carouselView.adapter = adapter
-        adapter.setOnItemClickCallback(object: ProductDetailCarouselAdapter.OnItemClickCallback {
-            override fun onItemClicked(view: View) {
-                openImageViewer(images)
+    private fun setupProductDetails() {
+        val product = getProductParcelableExtra()
+        if (product != null) {
+            with(binding) {
+                Glide.with(this@ProductDetailActivity)
+                    .load(Uri.parse(ProfileActivity.BASE_PROFILE_PICTURE))
+                    .into(productDetailSellerProfilePicture)
+                productDetailName.text = product.name
+                productDetailSellerUsername.text = product.user?.username
+//                productDetailProductPrice = product.price
             }
-        })
+        }
+    }
+
+    private fun getProductParcelableExtra(): GetProductsResponseItem? {
+        val product = if (Build.VERSION.SDK_INT >= 33) {
+            intent.getParcelableExtra(EXTRA_PRODUCT, GetProductsResponseItem::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            intent.getParcelableExtra(EXTRA_PRODUCT)
+        }
+
+        return product
     }
 
     private fun setupButtons() {
@@ -92,9 +117,11 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun handleRoleBasedButtons() {
+        val product = getProductParcelableExtra()
+
         viewModel.getSession().observe(this) { user ->
             with(binding) {
-                if (user.role == "CUSTOMER") {
+                if (user.role == "CUSTOMER" || product?.user?.id != user.id) {
                     productDetailEditButton.visibility = View.GONE
                     productDetailDeleteButton.visibility = View.GONE
                 }
@@ -156,5 +183,9 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun obtainViewModel(activity: AppCompatActivity): ProductDetailViewModel {
         val factory = ViewModelFactory.getInstance(activity.application)
         return ViewModelProvider(activity, factory)[ProductDetailViewModel::class.java]
+    }
+
+    companion object {
+        const val EXTRA_PRODUCT = "extra_product"
     }
 }
