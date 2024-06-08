@@ -10,7 +10,8 @@
 
 <ScrollView
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_marginBottom="65dp">
 
 <LinearLayout
     android:orientation="vertical"
@@ -45,7 +46,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="32dp"/>
+        android:layout_marginBottom="0dp"/>
 
 </LinearLayout>
 </ScrollView>
@@ -53,18 +54,17 @@
     <com.google.android.material.bottomappbar.BottomAppBar
         android:id="@+id/bottom_app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="65dp"
         android:layout_gravity="bottom"
         style="@style/Widget.Material3.BottomAppBar"
         android:backgroundTint="@color/blue_100"
         app:menu="@menu/bottom_app_bar"
-        app:hideOnScroll="true"
         />
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/create_product_cta"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         app:icon="@drawable/rounded_add_24"
         android:text="Create"
         android:textSize="18sp"
@@ -73,6 +73,7 @@
         app:iconTint="@color/blue_50"
         android:fontFamily="@font/rubik_medium"
         android:textColor="@color/blue_50"
+        android:layout_marginBottom="32dp"
         android:contentDescription="@string/create_product_button_content_description" />
 
 

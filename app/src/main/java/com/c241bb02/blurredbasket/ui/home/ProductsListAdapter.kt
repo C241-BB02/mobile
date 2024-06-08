@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.HomeProductsListItemBinding
+import com.c241bb02.blurredbasket.ui.utils.numberToRupiah
+import java.text.NumberFormat
+import java.util.Currency
 
 class ProductsListAdapter(private val list: List<GetProductsResponseItem>): RecyclerView.Adapter<ProductsListAdapter.ViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
@@ -38,7 +41,8 @@ class ProductsListAdapter(private val list: List<GetProductsResponseItem>): Recy
                     .into(homeProductsItemImage)
 
                 homeProductsItemName.text = product.name
-                homeProductsItemDescription.text = product.status
+                homeProductsItemSellerName.text = product.user?.username
+                homeProductsItemPrice.text = product.price?.let { numberToRupiah(it) }
 
                 itemView.setOnClickListener {
                     onItemClickCallback.onItemClicked(product, it)

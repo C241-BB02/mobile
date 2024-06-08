@@ -22,6 +22,7 @@ import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileViewModel
 import com.c241bb02.blurredbasket.ui.register.RegisterActivity
+import com.c241bb02.blurredbasket.ui.utils.numberToRupiah
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -86,7 +87,8 @@ class ProductDetailActivity : AppCompatActivity() {
                     .into(productDetailSellerProfilePicture)
                 productDetailName.text = product.name
                 productDetailSellerUsername.text = product.user?.username
-//                productDetailProductPrice = product.price
+                productDescriptionText.text = product.description
+                productDetailProductPrice.text = product.price?.let { numberToRupiah(it) }
             }
         }
     }

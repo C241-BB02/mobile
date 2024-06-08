@@ -31,21 +31,34 @@
             <TextView
                 android:id="@+id/home_products_item_name"
                 android:fontFamily="@font/rubik_medium"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/product_title"
-                android:textSize="20sp"
-                android:textColor="@color/blue_900"
+                android:textSize="18sp"
                 />
+
             <TextView
-                android:id="@+id/home_products_item_description"
+                android:id="@+id/home_products_item_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="@string/product_description"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?android:attr/textColorSecondary"
+                android:textSize="20sp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="@string/product_price_placeholder"
+                android:textColor="@color/blue_900"
                 />
+
+            <TextView
+                android:id="@+id/home_products_item_seller_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/product_seller_name"
+               android:fontFamily="@font/rubik_regular"
+                />
+
         </LinearLayout>
 
     </LinearLayout>

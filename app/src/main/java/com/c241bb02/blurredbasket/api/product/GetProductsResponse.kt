@@ -53,6 +53,12 @@ data class GetProductsResponseItem (
 	@field:SerializedName("status")
 	val status: String? = null,
 
+	@field:SerializedName("description")
+	val description: String? = null,
+
+	@field:SerializedName("price")
+	val price: Int? = null,
+
 	@field:SerializedName("photos")
 	val photos: List<PhotosItem> = emptyList(),
 ): Parcelable
