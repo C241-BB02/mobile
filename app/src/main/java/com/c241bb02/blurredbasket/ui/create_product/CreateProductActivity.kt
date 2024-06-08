@@ -76,7 +76,8 @@ class CreateProductActivity : AppCompatActivity() {
                 val description = createRequestBody(createProductDescriptionInput.text.toString())
                 val price = createRequestBody(createProductPriceInput.text.toString())
                 val stock = createRequestBody(createProductStockInput.text.toString())
-                val photos = selectedImages.map {
+                val filledUris = selectedImages.filter { it != Uri.EMPTY }
+                val photos = filledUris.map {
                     val file = uriToFile(it, this@CreateProductActivity).reduceFileImage()
                     val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
                     MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
