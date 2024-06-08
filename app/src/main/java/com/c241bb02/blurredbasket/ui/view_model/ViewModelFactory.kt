@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.c241bb02.blurredbasket.data.repository.ProductRepository
 import com.c241bb02.blurredbasket.data.repository.UserRepository
 import com.c241bb02.blurredbasket.di.Injection
+import com.c241bb02.blurredbasket.ui.create_product.CreateProductViewModel
 import com.c241bb02.blurredbasket.ui.home.HomeViewModel
 import com.c241bb02.blurredbasket.ui.onboarding.OnboardingViewModel
 import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailViewModel
@@ -32,6 +33,9 @@ class ViewModelFactory private constructor(
         }
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             return HomeViewModel(productRepository) as T
+        }
+        if (modelClass.isAssignableFrom(CreateProductViewModel::class.java)) {
+            return CreateProductViewModel(productRepository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

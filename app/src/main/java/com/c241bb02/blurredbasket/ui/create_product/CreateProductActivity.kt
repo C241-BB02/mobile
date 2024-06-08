@@ -1,30 +1,46 @@
 package com.c241bb02.blurredbasket.ui.create_product
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.os.FileUtils
+import android.provider.Telephony.Mms.Part
 import android.view.View
 import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityCreateProductBinding
+import com.c241bb02.blurredbasket.ui.home.HomeViewModel
+import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
+import com.c241bb02.blurredbasket.ui.utils.reduceFileImage
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
+import com.c241bb02.blurredbasket.ui.utils.uriToFile
+import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
-import com.google.android.material.carousel.FullScreenCarouselStrategy
 import com.google.android.material.carousel.HeroCarouselStrategy
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
+import com.google.gson.Gson
 import com.stfalcon.imageviewer.StfalconImageViewer
-
+import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import okhttp3.RequestBody.Companion.asRequestBody
+import okhttp3.RequestBody.Companion.toRequestBody
+import retrofit2.HttpException
 
 class CreateProductActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateProductBinding
+    private lateinit var viewModel: CreateProductViewModel
+
     private var selectedImages: ArrayList<Uri> = arrayListOf(
         Uri.EMPTY,
         Uri.EMPTY,
@@ -42,6 +58,8 @@ class CreateProductActivity : AppCompatActivity() {
         binding = ActivityCreateProductBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        viewModel = obtainViewModel(this)
+
         setupStatusBar(window, this, R.color.blue_50, true)
         setupImageCarousel()
         setupButtons()
@@ -53,9 +71,40 @@ class CreateProductActivity : AppCompatActivity() {
                 openImageViewer(selectedImages)
             }
             createProductButton.setOnClickListener {
+                val name = createRequestBody(createProductNameInput.text.toString())
+                val category = createRequestBody(createProductCategoryInput.text.toString())
+                val description = createRequestBody(createProductDescriptionInput.text.toString())
+                val price = createRequestBody(createProductPriceInput.text.toString())
+                val stock = createRequestBody(createProductStockInput.text.toString())
+                val photos = selectedImages.map {
+                    val file = uriToFile(it, this@CreateProductActivity).reduceFileImage()
+                    val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                    MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
+                }
+
+                lifecycleScope.launch {
+                    try {
+                        viewModel.createProduct(photos, name, category, stock, price, description)
+                        moveToProfileScreen()
+                        showToast("Your product has been created!")
+
+                    } catch (e: HttpException) {
+                        showToast("An error occurred while creating product. Please try again.")
+                    }
+                }
 
             }
         }
+    }
+
+    private fun moveToProfileScreen() {
+        val intent = Intent(this@CreateProductActivity, ProfileActivity::class.java)
+        startActivity(intent)
+    }
+
+
+    private fun createRequestBody(text: String): RequestBody {
+        return text.trim().toRequestBody("text/plain".toMediaType())
     }
 
     private fun startGallery() {
@@ -130,5 +179,10 @@ class CreateProductActivity : AppCompatActivity() {
             adapter?.updateData(startIndex, newImages)
             showToast("You have selected ${uris.size} photos.")
         }
+    }
+
+    private fun obtainViewModel(activity: AppCompatActivity): CreateProductViewModel {
+        val factory = ViewModelFactory.getInstance(activity.application)
+        return ViewModelProvider(activity, factory)[CreateProductViewModel::class.java]
     }
 }

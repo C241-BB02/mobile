@@ -67,21 +67,21 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun observeProducts() {
-       viewModel.getProducts().observe(this) { products ->
-           if (products != null) {
-               val productsView = binding.homeProductsRecyclerView
-               val productsAdapter = ProductsListAdapter(products)
+        viewModel.getProducts().observe(this) { products ->
+            if (products != null) {
+                val productsView = binding.homeProductsRecyclerView
+                val productsAdapter = ProductsListAdapter(products)
 
-               productsView.layoutManager = GridLayoutManager(this, 2)
-               productsView.adapter = productsAdapter
-               productsAdapter.setOnItemClickCallback(object :
-                   ProductsListAdapter.OnItemClickCallback {
-                   override fun onItemClicked(product: GetProductsResponseItem, view: View) {
-                       moveToProductDetailScreen(product, view)
-                   }
-               })
-           }
-       }
+                productsView.layoutManager = GridLayoutManager(this, 2)
+                productsView.adapter = productsAdapter
+                productsAdapter.setOnItemClickCallback(object :
+                    ProductsListAdapter.OnItemClickCallback {
+                    override fun onItemClicked(product: GetProductsResponseItem, view: View) {
+                        moveToProductDetailScreen(product, view)
+                    }
+                })
+            }
+        }
 
     }
 
@@ -92,6 +92,7 @@ class HomeActivity : AppCompatActivity() {
                     moveToProfileScreen()
                     true
                 }
+
                 else -> false
             }
         }

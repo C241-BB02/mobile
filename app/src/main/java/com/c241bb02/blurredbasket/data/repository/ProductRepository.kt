@@ -8,9 +8,12 @@ import com.c241bb02.blurredbasket.api.ApiService
 import com.c241bb02.blurredbasket.api.product.DeleteProductResponse
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.data.pref.UserPreference
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import retrofit2.http.Part
 
 class ProductRepository(
     private var apiService: ApiService,
@@ -46,6 +49,7 @@ class ProductRepository(
                     Log.e(TAG, "onFailure: ${response.message()}")
                 }
             }
+
             override fun onFailure(call: Call<List<GetProductsResponseItem>>, t: Throwable) {
                 _isLoading.value = false
                 _isError.value = false
@@ -75,6 +79,7 @@ class ProductRepository(
                     Log.e(TAG, "onFailure: ${response.message()}")
                 }
             }
+
             override fun onFailure(call: Call<List<GetProductsResponseItem>>, t: Throwable) {
                 _isLoading.value = false
                 _isError.value = false
@@ -83,6 +88,17 @@ class ProductRepository(
         })
 
         return sellerProducts
+    }
+
+    suspend fun createProduct(
+        photos: List<MultipartBody.Part>,
+        name: RequestBody,
+        category: RequestBody,
+        stock: RequestBody,
+        price: RequestBody,
+        description: RequestBody,
+    ): GetProductsResponseItem {
+        return apiService.createProduct(photos, name, category, stock, price, description)
     }
 
     suspend fun deleteProduct(productCode: String): DeleteProductResponse {
