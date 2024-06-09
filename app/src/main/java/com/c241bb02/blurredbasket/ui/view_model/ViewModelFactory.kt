@@ -33,7 +33,7 @@ class ViewModelFactory private constructor(
             return ProductDetailViewModel(userRepository, productRepository) as T
         }
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
-            return HomeViewModel(productRepository) as T
+            return HomeViewModel(userRepository, productRepository) as T
         }
         if (modelClass.isAssignableFrom(CreateProductViewModel::class.java)) {
             return CreateProductViewModel(productRepository) as T

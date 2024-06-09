@@ -37,6 +37,7 @@ class HomeActivity : AppCompatActivity() {
 
         setupStatusBar(window, this, R.color.blue_50, true)
         setupBannerCarousel()
+        handleRoleBasedComponents()
         observeProducts()
         setupBottomAppBar()
     }
@@ -44,6 +45,16 @@ class HomeActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         observeProducts()
+    }
+
+    private fun handleRoleBasedComponents() {
+        viewModel.getSession().observe(this) { user ->
+            with(binding) {
+                if (user.role == "CUSTOMER") {
+                    createProductCta.visibility = View.GONE
+                }
+            }
+        }
     }
 
     private fun setupBannerCarousel() {
