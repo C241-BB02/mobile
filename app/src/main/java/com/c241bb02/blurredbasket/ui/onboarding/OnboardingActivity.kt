@@ -7,19 +7,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.auth.LoginRequestDto
-import com.c241bb02.blurredbasket.api.auth.RegisterRequestDto
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.register.RegisterActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -34,9 +33,20 @@ class OnboardingActivity : AppCompatActivity() {
 
         viewModel = obtainViewModel(this)
 
+        setDefaultBackBehavior()
         setupStatusBar(window, this, R.color.blue_100, true)
         observeUserState()
         setupButtons()
+    }
+
+
+    private fun setDefaultBackBehavior() {
+        onBackPressedDispatcher.addCallback(this) {
+            val intent = Intent(Intent.ACTION_MAIN)
+            intent.addCategory(Intent.CATEGORY_HOME)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            startActivity(intent)
+        }
     }
 
     private fun observeUserState() {
@@ -50,7 +60,6 @@ class OnboardingActivity : AppCompatActivity() {
             }
         }
     }
-
 
     private fun setupButtons() {
         with(binding) {
