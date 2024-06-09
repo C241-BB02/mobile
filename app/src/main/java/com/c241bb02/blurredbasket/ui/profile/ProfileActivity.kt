@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
+import com.c241bb02.blurredbasket.data.util.Resource
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.home.ProductsListAdapter
@@ -43,6 +44,11 @@ class ProfileActivity : AppCompatActivity() {
         setupButtons()
         setupUserData()
         handleRoleBasedComponents()
+        setupSellerProductsList()
+    }
+
+    override fun onResume() {
+        super.onResume()
         setupSellerProductsList()
     }
 
@@ -122,22 +128,58 @@ class ProfileActivity : AppCompatActivity() {
     private fun setupSellerProductsList() {
         viewModel.getSession().observe(this) { user ->
             if (user != null && user.role == "SELLER") {
-                viewModel.getSellerProducts(user.id).observe(this) { products ->
-                    if (products != null) {
-                        val productsView = binding.sellerProductsList
-                        val productsAdapter = ProductsListAdapter(products)
+                binding.profileShimmerLayout.apply {
+                    visibility = View.VISIBLE
+                    startShimmer()
+                }
+                viewModel.getSellerProducts(user.id).observe(this) {
+                    when (it) {
+                        is Resource.Loading -> {
+                            startSkeletonLoader()
+                        }
 
-                        productsView.layoutManager = GridLayoutManager(this, 2)
-                        productsView.adapter = productsAdapter
-                        productsAdapter.setOnItemClickCallback(object :
-                            ProductsListAdapter.OnItemClickCallback {
-                            override fun onItemClicked(product: GetProductsResponseItem, view: View) {
-                                moveToProductDetailScreen(product, view)
-                            }
-                        })
+                        is Resource.Success -> {
+                            stopSkeletonLoader()
+                            binding.sellerProductsList.visibility = View.VISIBLE
+
+                            val productsView = binding.sellerProductsList
+                            val productsAdapter = ProductsListAdapter(it.data!!)
+
+                            productsView.layoutManager = GridLayoutManager(this, 2)
+                            productsView.adapter = productsAdapter
+                            productsAdapter.setOnItemClickCallback(object :
+                                ProductsListAdapter.OnItemClickCallback {
+                                override fun onItemClicked(product: GetProductsResponseItem, view: View) {
+                                    moveToProductDetailScreen(product, view)
+                                }
+                            })
+                        }
+
+                        is Resource.Error -> {
+                            stopSkeletonLoader()
+                        }
+
+                        else -> {
+                            stopSkeletonLoader()
+                        }
                     }
                 }
             }
+        }
+    }
+
+    private fun startSkeletonLoader() {
+        binding.sellerProductsList.visibility = View.GONE
+        binding.profileShimmerLayout.apply {
+            visibility = View.VISIBLE
+            startShimmer()
+        }
+    }
+
+    private fun stopSkeletonLoader() {
+        binding.profileShimmerLayout.apply {
+            visibility = View.GONE
+            stopShimmer()
         }
     }
 

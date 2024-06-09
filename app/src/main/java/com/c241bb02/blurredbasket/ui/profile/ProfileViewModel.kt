@@ -7,6 +7,7 @@ import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.data.pref.UserModel
 import com.c241bb02.blurredbasket.data.repository.ProductRepository
 import com.c241bb02.blurredbasket.data.repository.UserRepository
+import com.c241bb02.blurredbasket.data.util.Resource
 
 class ProfileViewModel(
     private val userRepository: UserRepository,
@@ -16,7 +17,7 @@ class ProfileViewModel(
         return userRepository.getSession().asLiveData()
     }
 
-    fun getSellerProducts(sellerId: String): LiveData<List<GetProductsResponseItem>?> {
+    fun getSellerProducts(sellerId: String): LiveData<Resource<List<GetProductsResponseItem>>?> {
         return productRepository.getSellerProducts(sellerId)
     }
 

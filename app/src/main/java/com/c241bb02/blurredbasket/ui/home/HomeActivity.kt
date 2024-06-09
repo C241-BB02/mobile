@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
+import com.c241bb02.blurredbasket.data.util.Resource
 import com.c241bb02.blurredbasket.databinding.ActivityHomeBinding
 import com.c241bb02.blurredbasket.ui.create_product.CreateProductActivity
 import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
@@ -78,22 +79,53 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun observeProducts() {
-        viewModel.getProducts().observe(this) { products ->
-            if (products != null) {
-                val productsView = binding.homeProductsRecyclerView
-                val productsAdapter = ProductsListAdapter(products)
+        viewModel.getProducts().observe(this) {
+            when (it) {
+                is Resource.Loading -> {
+                    startSkeletonLoader()
+                }
 
-                productsView.layoutManager = GridLayoutManager(this, 2)
-                productsView.adapter = productsAdapter
-                productsAdapter.setOnItemClickCallback(object :
-                    ProductsListAdapter.OnItemClickCallback {
-                    override fun onItemClicked(product: GetProductsResponseItem, view: View) {
-                        moveToProductDetailScreen(product, view)
-                    }
-                })
+                is Resource.Success -> {
+                    stopSkeletonLoader()
+                    binding.homeProductsRecyclerView.visibility = View.VISIBLE
+
+                    val productsView = binding.homeProductsRecyclerView
+                    val productsAdapter = ProductsListAdapter(it.data!!)
+
+                    productsView.layoutManager = GridLayoutManager(this, 2)
+                    productsView.adapter = productsAdapter
+                    productsAdapter.setOnItemClickCallback(object :
+                        ProductsListAdapter.OnItemClickCallback {
+                        override fun onItemClicked(product: GetProductsResponseItem, view: View) {
+                            moveToProductDetailScreen(product, view)
+                        }
+                    })
+                }
+
+                is Resource.Error -> {
+                    stopSkeletonLoader()
+                }
+
+                else -> {
+                    stopSkeletonLoader()
+                }
             }
         }
+    }
 
+    private fun startSkeletonLoader() {
+        binding.homeProductsRecyclerView.visibility = View.GONE
+        binding.shimmerLayout.apply {
+            visibility = View.VISIBLE
+            startShimmer()
+        }
+    }
+
+    private fun stopSkeletonLoader() {
+        binding.shimmerLayout.apply {
+            visibility = View.GONE
+            stopShimmer()
+        }
     }
 
     private fun setupBottomAppBar() {

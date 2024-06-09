@@ -7,6 +7,7 @@ import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.data.pref.UserModel
 import com.c241bb02.blurredbasket.data.repository.ProductRepository
 import com.c241bb02.blurredbasket.data.repository.UserRepository
+import com.c241bb02.blurredbasket.data.util.Resource
 
 class HomeViewModel(
     private val userRepository: UserRepository,
@@ -15,7 +16,7 @@ class HomeViewModel(
     fun getSession(): LiveData<UserModel> {
         return userRepository.getSession().asLiveData()
     }
-    fun getProducts(): LiveData<List<GetProductsResponseItem>?> {
+    fun getProducts(): LiveData<Resource<List<GetProductsResponseItem>>?> {
         return productRepository.getProducts()
     }
 
