@@ -101,6 +101,18 @@ class ProductRepository(
         return apiService.createProduct(photos, name, category, stock, price, description)
     }
 
+    suspend fun updateProduct(
+        id: String,
+        photos: List<MultipartBody.Part>,
+        name: RequestBody,
+        category: RequestBody,
+        stock: RequestBody,
+        price: RequestBody,
+        description: RequestBody,
+    ): GetProductsResponseItem {
+        return apiService.updateProduct(id, photos, name, category, stock, price, description)
+    }
+
     suspend fun deleteProduct(productCode: String): DeleteProductResponse {
         return apiService.deleteProduct(productCode)
     }

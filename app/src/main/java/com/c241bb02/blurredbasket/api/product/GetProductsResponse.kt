@@ -14,7 +14,7 @@ data class PhotosItem(
 	val product: String? = null,
 
 	@field:SerializedName("id")
-	val id: String? = null,
+	val id: String = "",
 
 	@field:SerializedName("status")
 	val status: String? = null
@@ -36,7 +36,7 @@ data class GetProductsResponseItem (
 	val revenue: Float? = null,
 
 	@field:SerializedName("code")
-	val code: String? = null,
+	val code: String = "",
 
 	@field:SerializedName("user")
 	val user: UserItem? = null,

@@ -172,7 +172,9 @@ class ProductDetailActivity : AppCompatActivity() {
     }
 
     private fun moveToEditProductScreen() {
+        val product = getProductParcelableExtra()
         val intent = Intent(this, EditProductActivity::class.java)
+        intent.putExtra(EditProductActivity.EXTRA_PRODUCT, product)
         startActivity(intent)
     }
 

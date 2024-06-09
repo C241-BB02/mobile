@@ -103,7 +103,6 @@ class CreateProductActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-
     private fun createRequestBody(text: String): RequestBody {
         return text.trim().toRequestBody("text/plain".toMediaType())
     }

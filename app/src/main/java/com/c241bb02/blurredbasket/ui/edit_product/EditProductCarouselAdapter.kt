@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.CarouselListItemBinding
 
@@ -45,9 +46,15 @@ class EditProductCarouselAdapter(private val imageList: ArrayList<Uri>): Recycle
                         onItemClickCallback.onItemClicked(it)
                     }
                 } else {
-                    homeCarouselItemImage.setImageURI(image)
+                    if (image.toString().startsWith("http")) {
+                        Glide.with(itemView.context)
+                            .load(image)
+                            .into(homeCarouselItemImage)
+                    } else {
+                        homeCarouselItemImage.setImageURI(image)
+                    }
                     itemView.setOnClickListener {
-                        onItemClickCallback.onDeleteClicked(it, layoutPosition)
+                        onItemClickCallback.onDeleteClicked(it, layoutPosition, image)
                     }
                 }
             }
@@ -56,6 +63,6 @@ class EditProductCarouselAdapter(private val imageList: ArrayList<Uri>): Recycle
 
     interface OnItemClickCallback {
         fun onItemClicked(view: View)
-        fun onDeleteClicked(view: View, itemPosition: Int)
+        fun onDeleteClicked(view: View, itemPosition: Int, image: Uri)
     }
 }

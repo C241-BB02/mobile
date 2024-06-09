@@ -6,10 +6,14 @@ import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.Uri
 import androidx.exifinterface.media.ExifInterface
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.io.InputStream
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -33,6 +37,27 @@ fun uriToFile(imageUri: Uri, context: Context): File {
     outputStream.close()
     inputStream.close()
     return myFile
+}
+
+fun urlToFile(url: String, context: Context): File {
+    val client = OkHttpClient()
+
+    val request = Request.Builder()
+        .url(url)
+        .build()
+
+    val response = client.newCall(request).execute()
+
+    if (!response.isSuccessful) throw IOException("Failed to download file: $response")
+
+    val inputStream = response.body?.byteStream()
+    val file = createCustomTempFile(context)
+
+    FileOutputStream(file).use { outputStream ->
+        inputStream?.copyTo(outputStream)
+    }
+
+    return file
 }
 
 fun File.reduceFileImage(): File {
