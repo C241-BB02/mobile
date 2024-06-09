@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.ActivityProfileBinding
+import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.home.ProductsListAdapter
 import com.c241bb02.blurredbasket.ui.onboarding.OnboardingActivity
 import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
@@ -36,6 +38,7 @@ class ProfileActivity : AppCompatActivity() {
 
         viewModel = obtainViewModel(this)
 
+        setDefaultBackBehavior()
         setupStatusBar(window, this, R.color.blue_900, false)
         setupButtons()
         setupUserData()
@@ -43,6 +46,16 @@ class ProfileActivity : AppCompatActivity() {
         setupSellerProductsList()
     }
 
+    private fun setDefaultBackBehavior() {
+        onBackPressedDispatcher.addCallback(this) {
+            moveToHomeScreen()
+        }
+    }
+
+    private fun moveToHomeScreen() {
+        val intent = Intent(this@ProfileActivity, HomeActivity::class.java)
+        startActivity(intent)
+    }
 
     private fun setupButtons() {
         with(binding) {
