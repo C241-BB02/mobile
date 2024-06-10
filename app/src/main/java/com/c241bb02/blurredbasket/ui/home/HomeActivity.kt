@@ -77,14 +77,14 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun setupBannerCarousel() {
-        val arrayList = listOf(
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-            "https://images.unsplash.com/photo-1692528131755-d4e366b2adf0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwzNXx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        val banners = listOf(
+            "https://storage.googleapis.com/c241-bb02/photos/Blurred.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=django-bucket%40c241-bb02.iam.gserviceaccount.com%2F20240610%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240610T164925Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=555968757fcde63cdf7d5118a57f7ee9422af78fd04d41601ea490dc21b03525fe5a774df8b6b80671ed19737083fb82fbc902f766f586384e2f00810694f5ba99ee7a6fed3291eaa17e89ecc8624a0b8fac1e85ffb605ee68a90ba893509ddbf5d3330e25c9025035d41ea852233a021d6f792ee44494df9ac1a7862308cc64d388850bab856e1882909d54b8e9178e6b7fe83f01d15c7d9818b2bf8623cbd7bad77252cfebef1b4e037c5be3e6567feda4f0011557426fe23b338ba364d6edfc9d7a8fa3df3e5505f31ee4dbd81e65c07581c6dadb760d54778bf4f5775099db8063a034fe60bf272da2b693aa199e3d0b6d85a49ac5286f1497813496db50",
+            "https://storage.googleapis.com/c241-bb02/photos/2.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=django-bucket%40c241-bb02.iam.gserviceaccount.com%2F20240610%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240610T164725Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=84b1ea3564f6537569d51f861b2b3af53a1b76a91b8a143d0ec46db4106757d77c969305485014e36ca72a11201cc627aefbf517271af075193827460af3c986decb6f4f9e0197431921b987486d16397bc9a4a8e9b457f5ff978ceafb37db77992bce19bd74a4928a8b137bac89c1cb2348fd2014119abd71934371bb8e7328d65b2e55f916236e67f54eca1be7f5face9fb4b5a5934730f6c23a47099480d70e44a8451ae4bb8c1d79ecaf3b4000beb9b611414ae96d6d9cab594c9717c2f8f0c33aadc62f7fbaf3071ac9a2282a3205d1dd6e4d358e2b072190866c9258f6bc0107daddc571fe5b6b625a79a6d84c0ca540b4ee7441de81495565ba6cd8bf",
+            "https://storage.googleapis.com/c241-bb02/photos/3.png?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=django-bucket%40c241-bb02.iam.gserviceaccount.com%2F20240610%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20240610T164725Z&X-Goog-Expires=86400&X-Goog-SignedHeaders=host&X-Goog-Signature=13818a45016c3cd0902c264cdde5bc6ea4ef919fb40b6f584e5eec92de701fab51fa42259ad73d3279fa7c5c8962f8f1d99674455086ec752f8f752558352c08102c200219cdc7ad5d30d4e3f00f905cdcc76323213d6f5e4ad56183ca5c44c1f654ed15dba64427827b4d5e22b2a0861d5aefdc5c88e95cefce44e26aa979e6834f3e23b99281ad89c4394129423a41fae7eaef90f93053d83335ad888edfde2b1e990283677e6332defa40d2443e2811e347713dcd643bbccee41f5ff30e42eaac941c65b381af7006b0727e22e62c711be8a33463eded99d4042f490d9cfe9ca88f164685f8a636042c7ff1b519d336a1694ffe80769682a2a768611ed26c",
         )
 
         val carouselView = binding.homeCarouselRecyclerView
-        val adapter = HomeCarouselAdapter(arrayList)
+        val adapter = HomeCarouselAdapter(banners)
 
         val snapHelper = CarouselSnapHelper()
         snapHelper.attachToRecyclerView(carouselView)
