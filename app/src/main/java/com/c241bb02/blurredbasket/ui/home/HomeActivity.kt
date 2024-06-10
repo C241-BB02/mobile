@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.Window
+import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -26,6 +28,7 @@ import com.google.android.material.transition.platform.MaterialContainerTransfor
 class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private lateinit var viewModel: HomeViewModel
+    private var backCount = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupTransition()
@@ -37,10 +40,30 @@ class HomeActivity : AppCompatActivity() {
         viewModel = obtainViewModel(this)
 
         setupStatusBar(window, this, R.color.blue_50, true)
+        setDefaultBackBehavior()
         setupBannerCarousel()
         handleRoleBasedComponents()
         observeProducts()
         setupBottomAppBar()
+    }
+
+    private fun setDefaultBackBehavior() {
+        onBackPressedDispatcher.addCallback(this) {
+            backCount += 1
+            if (backCount == 1) {
+                showToast("Press back once more to exit Blurred Basket.")
+            } else {
+                val intent = Intent(Intent.ACTION_MAIN)
+                intent.addCategory(Intent.CATEGORY_HOME)
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
+                finish()
+            }
+        }
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun handleRoleBasedComponents() {
