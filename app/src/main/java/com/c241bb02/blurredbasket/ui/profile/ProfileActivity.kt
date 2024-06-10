@@ -47,11 +47,6 @@ class ProfileActivity : AppCompatActivity() {
         setupSellerProductsList()
     }
 
-    override fun onResume() {
-        super.onResume()
-        setupSellerProductsList()
-    }
-
     private fun setDefaultBackBehavior() {
         onBackPressedDispatcher.addCallback(this) {
             moveToHomeScreen()

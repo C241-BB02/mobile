@@ -2,6 +2,7 @@ package com.c241bb02.blurredbasket.ui.onboarding
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.Button
@@ -54,8 +55,7 @@ class OnboardingActivity : AppCompatActivity() {
             if (user.token != "") {
                 val factory = ViewModelFactory.getInstance(this)
                 factory.updateToken(user.token)
-                val intent = Intent(this, HomeActivity::class.java)
-                startActivity(intent)
+                moveToHomeScreen()
                 finish()
             }
         }

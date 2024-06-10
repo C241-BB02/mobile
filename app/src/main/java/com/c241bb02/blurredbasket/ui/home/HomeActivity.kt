@@ -43,11 +43,6 @@ class HomeActivity : AppCompatActivity() {
         setupBottomAppBar()
     }
 
-    override fun onResume() {
-        super.onResume()
-        observeProducts()
-    }
-
     private fun handleRoleBasedComponents() {
         viewModel.getSession().observe(this) { user ->
             with(binding) {

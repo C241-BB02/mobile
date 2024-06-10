@@ -10,6 +10,7 @@ import android.view.Window
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +20,7 @@ import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.databinding.ActivityProductDetailBinding
 import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
+import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileViewModel
 import com.c241bb02.blurredbasket.ui.register.RegisterActivity
@@ -49,10 +51,22 @@ class ProductDetailActivity : AppCompatActivity() {
         viewModel = obtainViewModel(this)
 
         setupStatusBar(window, this, R.color.white, true)
+        setDefaultBackBehavior()
         handleRoleBasedButtons()
         setupButtons()
         setupImageCarousel()
         setupProductDetails()
+    }
+
+    private fun setDefaultBackBehavior() {
+        onBackPressedDispatcher.addCallback(this) {
+            moveToHomeScreen()
+        }
+    }
+
+    private fun moveToHomeScreen() {
+        val intent = Intent(this@ProductDetailActivity, HomeActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setupImageCarousel(){

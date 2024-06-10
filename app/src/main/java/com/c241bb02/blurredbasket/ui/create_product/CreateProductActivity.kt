@@ -8,6 +8,7 @@ import android.provider.Telephony.Mms.Part
 import android.view.View
 import android.view.Window
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.databinding.ActivityCreateProductBinding
+import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.home.HomeViewModel
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.utils.reduceFileImage
@@ -61,8 +63,20 @@ class CreateProductActivity : AppCompatActivity() {
         viewModel = obtainViewModel(this)
 
         setupStatusBar(window, this, R.color.blue_50, true)
+        setDefaultBackBehavior()
         setupImageCarousel()
         setupButtons()
+    }
+
+    private fun setDefaultBackBehavior() {
+        onBackPressedDispatcher.addCallback(this) {
+            moveToHomeScreen()
+        }
+    }
+
+    private fun moveToHomeScreen() {
+        val intent = Intent(this@CreateProductActivity, HomeActivity::class.java)
+        startActivity(intent)
     }
 
     private fun setupButtons() {
