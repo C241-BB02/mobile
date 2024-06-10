@@ -60,7 +60,12 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun setDefaultBackBehavior() {
         onBackPressedDispatcher.addCallback(this) {
-            moveToHomeScreen()
+            val previousActivity = intent.getStringExtra(EXTRA_PREVIOUS_ACTIVITY)
+            if (previousActivity == "profile") {
+                moveToProfileScreen()
+            } else {
+                moveToHomeScreen()
+            }
         }
     }
 
@@ -225,5 +230,6 @@ class ProductDetailActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_PRODUCT = "extra_product"
+        const val EXTRA_PREVIOUS_ACTIVITY = "extra_previous_activity"
     }
 }

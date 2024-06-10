@@ -181,6 +181,7 @@ class ProfileActivity : AppCompatActivity() {
     private fun moveToProductDetailScreen(product: GetProductsResponseItem, view: View) {
         val moveIntent = Intent(this, ProductDetailActivity::class.java)
         moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "profile")
         val options = ActivityOptions.makeSceneTransitionAnimation(
             this,
             view,

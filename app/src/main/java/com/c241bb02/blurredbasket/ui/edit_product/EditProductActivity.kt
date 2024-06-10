@@ -1,5 +1,6 @@
 package com.c241bb02.blurredbasket.ui.edit_product
 
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +21,7 @@ import com.c241bb02.blurredbasket.databinding.ActivityEditProductBinding
 import com.c241bb02.blurredbasket.ui.create_product.CreateProductCarouselAdapter
 import com.c241bb02.blurredbasket.ui.create_product.CreateProductViewModel
 import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
+import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.utils.createCustomTempFile
 import com.c241bb02.blurredbasket.ui.utils.reduceFileImage
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
@@ -163,7 +165,7 @@ class EditProductActivity : AppCompatActivity() {
                                 description
                             )
                             showToast("Your product has been updated!")
-
+                            moveToProfileScreen()
                         } catch (e: HttpException) {
                             showToast("An error occurred while updating product. Please try again.")
                         }
@@ -252,6 +254,11 @@ class EditProductActivity : AppCompatActivity() {
             addTarget(android.R.id.content)
             duration = 400L
         }
+    }
+
+    private fun moveToProfileScreen() {
+        val moveIntent = Intent(this, ProfileActivity::class.java)
+        startActivity(moveIntent)
     }
 
     private val launcherGallery = registerForActivityResult(
