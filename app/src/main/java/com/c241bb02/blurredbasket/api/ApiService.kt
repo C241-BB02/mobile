@@ -37,14 +37,14 @@ interface ApiService {
 
     @Multipart
     @POST("create-product/")
-    suspend fun createProduct(
+    fun createProduct(
         @Part photos: List<MultipartBody.Part>,
         @Part("name") name: RequestBody,
         @Part("category") category: RequestBody,
         @Part("stock") stock: RequestBody,
         @Part("price") price: RequestBody,
         @Part("description") description: RequestBody,
-    ): GetProductsResponseItem
+    ): Call<GetProductsResponseItem>
 
     @Multipart
     @PATCH("product/update/{id}/")

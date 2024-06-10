@@ -23,6 +23,9 @@ class ProductRepository(
     private val _sellerProducts = MutableLiveData<Resource<List<GetProductsResponseItem>>?>()
     private val sellerProducts: LiveData<Resource<List<GetProductsResponseItem>>?> = _sellerProducts
 
+    private val _createProductResponse = MutableLiveData<Resource<GetProductsResponseItem>?>()
+    private val createProductResponse: LiveData<Resource<GetProductsResponseItem>?> = _createProductResponse
+
     fun getProducts(): LiveData<Resource<List<GetProductsResponseItem>>?> {
         _products.value = Resource.Loading()
         val client = apiService.getProducts()
@@ -77,15 +80,39 @@ class ProductRepository(
         return sellerProducts
     }
 
-    suspend fun createProduct(
+    fun createProduct(
         photos: List<MultipartBody.Part>,
         name: RequestBody,
         category: RequestBody,
         stock: RequestBody,
         price: RequestBody,
         description: RequestBody,
-    ): GetProductsResponseItem {
-        return apiService.createProduct(photos, name, category, stock, price, description)
+    ): LiveData<Resource<GetProductsResponseItem>?> {
+        _createProductResponse.value = Resource.Loading()
+        val client = apiService.createProduct(photos, name, category, stock, price, description)
+        client.enqueue(object : Callback<GetProductsResponseItem> {
+            override fun onResponse(
+                call: Call<GetProductsResponseItem>,
+                response: Response<GetProductsResponseItem>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        _createProductResponse.value = Resource.Success(responseBody)
+                    }
+                } else {
+                    _createProductResponse.value = Resource.Error(response.message())
+                    Log.e(TAG, "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetProductsResponseItem>, t: Throwable) {
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
+
+        return createProductResponse
+
     }
 
     suspend fun updateProduct(

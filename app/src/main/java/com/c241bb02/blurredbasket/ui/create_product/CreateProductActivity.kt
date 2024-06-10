@@ -3,8 +3,6 @@ package com.c241bb02.blurredbasket.ui.create_product
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.FileUtils
-import android.provider.Telephony.Mms.Part
 import android.view.View
 import android.view.Window
 import android.widget.Toast
@@ -13,11 +11,13 @@ import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
+import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
+import com.c241bb02.blurredbasket.data.util.Resource
 import com.c241bb02.blurredbasket.databinding.ActivityCreateProductBinding
+import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
-import com.c241bb02.blurredbasket.ui.home.HomeViewModel
+import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.utils.reduceFileImage
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
@@ -26,18 +26,16 @@ import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.HeroCarouselStrategy
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
-import com.google.gson.Gson
 import com.stfalcon.imageviewer.StfalconImageViewer
-import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import retrofit2.HttpException
 
 class CreateProductActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCreateProductBinding
@@ -97,19 +95,132 @@ class CreateProductActivity : AppCompatActivity() {
                     MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
                 }
 
-                lifecycleScope.launch {
-                    try {
-                        viewModel.createProduct(photos, name, category, stock, price, description)
-                        moveToProfileScreen()
-                        showToast("Your product has been created!")
+                viewModel.createProduct(photos, name, category, stock, price, description)
+                    .observe(this@CreateProductActivity) {
+                        when (it) {
+                            is Resource.Loading -> {
+                                showLoadingCreateProduct()
+                            }
 
-                    } catch (e: HttpException) {
-                        showToast("An error occurred while creating product. Please try again.")
+                            is Resource.Success -> {
+                                stopLoadingCreateProduct()
+                                val response = it.data
+                                if (response != null) {
+                                    binding.createProductButton.isEnabled = true
+                                    val numberOfPasses =
+                                        response.photos.filter { photo -> photo.status != "Blur" }.size
+                                    if (response.status.equals("ACCEPTED")) {
+                                        val message = if (numberOfPasses < response.photos.size)
+                                            "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
+                                        else
+                                            "Your product is now live. You can update your product any time from the product detail screen."
+
+                                        showAcceptedDialog(message, product = response)
+
+                                    } else {
+                                        showBannedDialog(numberOfPasses, product = response)
+                                    }
+
+                                }
+                            }
+
+                            is Resource.Error -> {
+                                stopLoadingCreateProduct()
+                                showErrorDialog()
+                            }
+
+                            else -> {
+                                stopLoadingCreateProduct()
+                                showErrorDialog()
+                            }
+
+                        }
                     }
-                }
 
             }
         }
+    }
+
+    private fun showLoadingCreateProduct() {
+        binding.createProductButton.isEnabled = false
+        binding.createProductButton.text = "Creating product..."
+    }
+
+    private fun stopLoadingCreateProduct() {
+        binding.createProductButton.isEnabled = true
+        binding.createProductButton.text = "Create Product"
+    }
+
+    private fun showAcceptedDialog(message: String, product: GetProductsResponseItem) {
+        MaterialAlertDialogBuilder(this@CreateProductActivity)
+            .setCancelable(false)
+            .setTitle("Success!")
+            .setMessage(message)
+            .setNeutralButton("Home") { dialog, _ ->
+                moveToHomeScreen()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Profile") { dialog, _ ->
+                moveToProfileScreen()
+                dialog.dismiss()
+            }
+            .setPositiveButton("See My Product") { dialog, _ ->
+                moveToProductDetailScreen(product)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showBannedDialog(numberOfPasses: Int, product: GetProductsResponseItem) {
+        MaterialAlertDialogBuilder(this@CreateProductActivity)
+            .setCancelable(false)
+            .setTitle("Whoops!")
+            .setMessage("After reviewing your product, we concluded that your product has not met the standard. A product must have at least 3 non-blurred photos, but you have uploaded $numberOfPasses non-blurred photos. Your product will not be displayed to customers, but you can still see it in your profile screen. You can update your product any time from the product detail screen.")
+            .setNeutralButton("Home") { dialog, _ ->
+                moveToHomeScreen()
+                dialog.dismiss()
+            }
+            .setNegativeButton("See My Product") { dialog, _ ->
+                moveToProductDetailScreen(product)
+                dialog.dismiss()
+            }
+            .setPositiveButton("Update") { dialog, _ ->
+                moveToEditProductScreen(product)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showErrorDialog() {
+        MaterialAlertDialogBuilder(this@CreateProductActivity)
+            .setCancelable(false)
+            .setTitle("Something went wrong")
+            .setMessage("An error occurred while creating product.")
+            .setNeutralButton("Home") { dialog, _ ->
+                moveToHomeScreen()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Profile") { dialog, _ ->
+                moveToProfileScreen()
+                dialog.dismiss()
+            }
+            .setPositiveButton("Try again") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun moveToEditProductScreen(product: GetProductsResponseItem) {
+        val intent = Intent(this, EditProductActivity::class.java)
+        intent.putExtra(EditProductActivity.EXTRA_PRODUCT, product)
+        startActivity(intent)
+    }
+
+    private fun moveToProductDetailScreen(product: GetProductsResponseItem) {
+        val moveIntent = Intent(this, ProductDetailActivity::class.java)
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "create")
+        startActivity(moveIntent)
     }
 
     private fun moveToProfileScreen() {
@@ -125,7 +236,7 @@ class CreateProductActivity : AppCompatActivity() {
         launcherGallery.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
     }
 
-    private fun setupImageCarousel(){
+    private fun setupImageCarousel() {
         val carouselView = binding.createProductImageCarousel
         adapter = CreateProductCarouselAdapter(selectedImages)
 
@@ -137,7 +248,7 @@ class CreateProductActivity : AppCompatActivity() {
 
         carouselView.layoutManager = carouselLayoutManager
         carouselView.adapter = adapter
-        adapter?.setOnItemClickCallback(object: CreateProductCarouselAdapter.OnItemClickCallback {
+        adapter?.setOnItemClickCallback(object : CreateProductCarouselAdapter.OnItemClickCallback {
             override fun onItemClicked(view: View) {
                 startGallery()
             }
@@ -151,7 +262,7 @@ class CreateProductActivity : AppCompatActivity() {
     }
 
     private fun openImageViewer(images: List<Uri>) {
-        val filledUris = images.filter {it != Uri.EMPTY}
+        val filledUris = images.filter { it != Uri.EMPTY }
         StfalconImageViewer.Builder(this, filledUris) { view, image ->
             view.setImageURI(image)
         }.show()
@@ -172,7 +283,7 @@ class CreateProductActivity : AppCompatActivity() {
 
         }
 
-        window.sharedElementReturnTransition  = MaterialContainerTransform().apply {
+        window.sharedElementReturnTransition = MaterialContainerTransform().apply {
             addTarget(android.R.id.content)
             duration = 400L
         }
@@ -180,9 +291,9 @@ class CreateProductActivity : AppCompatActivity() {
 
     private val launcherGallery = registerForActivityResult(
         ActivityResultContracts.PickMultipleVisualMedia(MAX_IMAGES)
-    ) {  uris ->
+    ) { uris ->
         val filledUris = selectedImages.filter { it != Uri.EMPTY }
-        if(uris.size + filledUris.size > MAX_IMAGES) {
+        if (uris.size + filledUris.size > MAX_IMAGES) {
             showToast("You can only pick at most $MAX_IMAGES photos.")
         } else {
             val newImages = ArrayList(uris)
