@@ -49,6 +49,7 @@ class ProductRepository(
             }
 
             override fun onFailure(call: Call<List<GetProductsResponseItem>>, t: Throwable) {
+                _products.value = Resource.Error(t.message.toString())
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         })
@@ -76,6 +77,7 @@ class ProductRepository(
             }
 
             override fun onFailure(call: Call<List<GetProductsResponseItem>>, t: Throwable) {
+                _sellerProducts.value = Resource.Error(t.message.toString())
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         })

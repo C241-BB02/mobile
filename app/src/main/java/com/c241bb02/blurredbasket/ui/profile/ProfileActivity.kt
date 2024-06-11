@@ -152,10 +152,12 @@ class ProfileActivity : AppCompatActivity() {
 
                         is Resource.Error -> {
                             stopSkeletonLoader()
+                            showToast("An error occurred while getting products.")
                         }
 
                         else -> {
                             stopSkeletonLoader()
+                            showToast("An error occurred while getting products.")
                         }
                     }
                 }
