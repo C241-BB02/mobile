@@ -30,13 +30,38 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/edit_product_image_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/rubik_regular"
+                android:text="@string/create_product_image_info"
+                android:textColor="@color/blue_900"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/edit_product_delete_image_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:fontFamily="@font/rubik_regular"
+                android:text="@string/create_product_delete_image_info"
+                android:textColor="@color/blue_900"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_image_info" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/edit_product_image_carousel"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
+                android:layout_marginTop="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_delete_image_info" />
 
             <Button
                 android:id="@+id/edit_product_preview_image_button"
@@ -50,28 +75,6 @@
                 app:layout_constraintTop_toBottomOf="@+id/edit_product_image_carousel" />
 
             <TextView
-                android:id="@+id/edit_product_image_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:fontFamily="@font/rubik_regular"
-                android:text="@string/create_product_image_info"
-                android:textColor="@color/blue_900"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_preview_image_button" />
-
-            <TextView
-                android:id="@+id/edit_product_delete_image_info"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="16dp"
-                android:fontFamily="@font/rubik_regular"
-                android:text="@string/create_product_delete_image_info"
-                android:textColor="@color/blue_900"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_image_info" />
-
-            <TextView
                 android:id="@+id/edit_product_name_input_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -79,7 +82,7 @@
                 android:fontFamily="@font/rubik_medium"
                 android:text="Name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_delete_image_info" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_preview_image_button" />
 
             <EditText
                 android:id="@+id/edit_product_name_input"
