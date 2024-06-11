@@ -56,7 +56,7 @@ class ProductsListAdapter(
                     sellerProductStatusChip.visibility = View.VISIBLE
                     sellerProductStatusChip.text = product.status.lowercase().replaceFirstChar { it.uppercase() }
                     val chipColor = if (product.status == "ACCEPTED") R.color.green else R.color.red
-                    sellerProductStatusChip.setBackgroundColor(chipColor)
+                    sellerProductStatusChip.setChipBackgroundColorResource(chipColor)
                 } else {
                     homeProductsItemSellerName.text = product.user?.username
                 }

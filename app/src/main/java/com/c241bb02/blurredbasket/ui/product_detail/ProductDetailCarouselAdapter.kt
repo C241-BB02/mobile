@@ -49,9 +49,9 @@ class ProductDetailCarouselAdapter(
                     imageStatusChip.visibility = View.VISIBLE
                     imageStatusChip.text = photo.status
                     if (photo.status == "Blur") {
-                        imageStatusChip.setBackgroundColor(R.color.red)
+                        imageStatusChip.setChipBackgroundColorResource(R.color.red)
                     } else {
-                        imageStatusChip.setBackgroundColor(R.color.green)
+                        imageStatusChip.setChipBackgroundColorResource(R.color.green)
                     }
                 }
 
