@@ -10,6 +10,7 @@ import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
@@ -63,7 +64,52 @@ class CreateProductActivity : AppCompatActivity() {
         setDefaultBackBehavior()
         setupImageCarousel()
         setupButtons()
+        handleInputsChanges()
     }
+
+    private fun handleInputsChanges() {
+        with(binding) {
+            createProductNameInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null && text.isEmpty()) {
+                    createProductNameInput.error = "Required"
+                }
+            }
+
+            createProductDescriptionInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null && text.isEmpty()) {
+                    createProductDescriptionInput.error = "Required"
+                }
+            }
+
+            createProductCategoryInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null && text.isEmpty()) {
+                    createProductCategoryInput.error = "Required"
+                }
+            }
+
+            createProductPriceInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null) {
+                    if (text.isEmpty()) {
+                        createProductPriceInput.error = "Required"
+                    } else if (text.toString().toInt() < 0) {
+                        createProductPriceInput.error = "Price must be at least 0"
+                    }
+                }
+            }
+
+            createProductStockInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null) {
+                    if (text.isEmpty()) {
+                        createProductStockInput.error = "Required"
+                    } else if (text.toString().toInt() <= 0) {
+                        createProductStockInput.error = "Stock must be greater than 0"
+                    }
+                }
+            }
+        }
+
+    }
+
 
     private fun setDefaultBackBehavior() {
         onBackPressedDispatcher.addCallback(this) {
@@ -82,62 +128,118 @@ class CreateProductActivity : AppCompatActivity() {
                 openImageViewer(selectedImages)
             }
             createProductButton.setOnClickListener {
-                val name = createRequestBody(createProductNameInput.text.toString())
-                val category = createRequestBody(createProductCategoryInput.text.toString())
-                val description = createRequestBody(createProductDescriptionInput.text.toString())
-                val price = createRequestBody(createProductPriceInput.text.toString())
-                val stock = createRequestBody(createProductStockInput.text.toString())
+                val nameText = createProductNameInput.text.toString()
+                val categoryText = createProductCategoryInput.text.toString()
+                val descriptionText = createProductDescriptionInput.text.toString()
+                val priceText = createProductPriceInput.text.toString()
+                val stockText = createProductStockInput.text.toString()
                 val filledUris = selectedImages.filter { it != Uri.EMPTY }
-                val photos = filledUris.map {
-                    val file = uriToFile(it, this@CreateProductActivity).reduceFileImage()
-                    val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                    MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
-                }
 
-                viewModel.createProduct(photos, name, category, stock, price, description)
-                    .observe(this@CreateProductActivity) {
-                        when (it) {
-                            is Resource.Loading -> {
-                                showLoadingCreateProduct()
-                            }
-
-                            is Resource.Success -> {
-                                stopLoadingCreateProduct()
-                                val response = it.data
-                                if (response != null) {
-                                    binding.createProductButton.isEnabled = true
-                                    val numberOfPasses =
-                                        response.photos.filter { photo -> photo.status != "Blur" }.size
-                                    if (response.status.equals("ACCEPTED")) {
-                                        val message = if (numberOfPasses < response.photos.size)
-                                            "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
-                                        else
-                                            "Your product is now live. You can update your product any time from the product detail screen."
-
-                                        showAcceptedDialog(message, product = response)
-
-                                    } else {
-                                        showBannedDialog(numberOfPasses, product = response)
-                                    }
-
-                                }
-                            }
-
-                            is Resource.Error -> {
-                                stopLoadingCreateProduct()
-                                showErrorDialog()
-                            }
-
-                            else -> {
-                                stopLoadingCreateProduct()
-                                showErrorDialog()
-                            }
-
-                        }
+                if (createProductPayloadIsValid(
+                        photos = filledUris,
+                        name = nameText,
+                        category = categoryText,
+                        stock = stockText,
+                        price = priceText,
+                        description = descriptionText
+                    )
+                ) {
+                    val name = createRequestBody(nameText)
+                    val category = createRequestBody(categoryText)
+                    val description = createRequestBody(descriptionText)
+                    val price = createRequestBody(priceText)
+                    val stock = createRequestBody(stockText)
+                    val photos = filledUris.map {
+                        val file = uriToFile(it, this@CreateProductActivity).reduceFileImage()
+                        val requestImageFile = file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                        MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
                     }
+
+                    viewModel.createProduct(photos, name, category, stock, price, description)
+                        .observe(this@CreateProductActivity) {
+                            when (it) {
+                                is Resource.Loading -> {
+                                    showLoadingCreateProduct()
+                                }
+
+                                is Resource.Success -> {
+                                    stopLoadingCreateProduct()
+                                    val response = it.data
+                                    if (response != null) {
+                                        binding.createProductButton.isEnabled = true
+                                        val numberOfPasses =
+                                            response.photos.filter { photo -> photo.status != "Blur" }.size
+                                        if (response.status.equals("ACCEPTED")) {
+                                            val message = if (numberOfPasses < response.photos.size)
+                                                "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
+                                            else
+                                                "Your product is now live. You can update your product any time from the product detail screen."
+
+                                            showAcceptedDialog(message, product = response)
+
+                                        } else {
+                                            showBannedDialog(numberOfPasses, product = response)
+                                        }
+
+                                    }
+                                }
+
+                                is Resource.Error -> {
+                                    stopLoadingCreateProduct()
+                                    showErrorDialog()
+                                }
+
+                                else -> {
+                                    stopLoadingCreateProduct()
+                                    showErrorDialog()
+                                }
+
+                            }
+                        }
+                }
 
             }
         }
+    }
+
+    private fun createProductPayloadIsValid(
+        photos: List<Uri>,
+        name: String,
+        category: String,
+        stock: String,
+        price: String,
+        description: String,
+    ): Boolean {
+        if (photos.size < 3) {
+            showToast("You must select at least 3 photos.")
+            return false
+        }
+        if (name.isEmpty()) {
+            showToast("You must enter a product name.")
+            return false
+        }
+        if (category.isEmpty()) {
+            showToast("You must enter a product category.")
+            return false
+        }
+        if (stock.toInt() <= 0) {
+            showToast("Product stock must be greater than 0.")
+            return false
+        }
+        if (price.isEmpty()) {
+            showToast("You must enter a product price.")
+            return false
+        }
+        if (price.toInt() < 0) {
+            showToast("Product price cannot be negative.")
+            return false
+        }
+        if (description.isEmpty()) {
+            showToast("You must enter a product category.")
+            return false
+        }
+
+        return true
     }
 
     private fun showLoadingCreateProduct() {
