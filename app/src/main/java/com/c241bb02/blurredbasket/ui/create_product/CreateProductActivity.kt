@@ -3,6 +3,7 @@ package com.c241bb02.blurredbasket.ui.create_product
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.Toast
@@ -125,7 +126,12 @@ class CreateProductActivity : AppCompatActivity() {
     private fun setupButtons() {
         with(binding) {
             createProductPreviewImageButton.setOnClickListener {
-                openImageViewer(selectedImages)
+                val filledUris = selectedImages.filter { it != Uri.EMPTY }
+                if (filledUris.isEmpty()) {
+                    showToast("You have not selected any images.")
+                } else {
+                    openImageViewer(selectedImages)
+                }
             }
             createProductButton.setOnClickListener {
                 val nameText = createProductNameInput.text.toString()
@@ -398,11 +404,12 @@ class CreateProductActivity : AppCompatActivity() {
             showToast("You can only pick at most $MAX_IMAGES photos.")
         } else {
             val newImages = ArrayList(uris)
+            Log.d("MOMENT GAS", newImages.toString())
             val startIndex = filledUris.size
             for (index in 0..<newImages.size) {
                 selectedImages[startIndex + index] = newImages[index]
             }
-            adapter?.updateData(startIndex, newImages)
+            adapter?.updateData(0, selectedImages)
             showToast("You have selected ${uris.size} photos.")
         }
     }
