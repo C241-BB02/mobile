@@ -27,7 +27,7 @@
 
             <com.google.android.material.chip.Chip
                 android:id="@+id/seller_product_status_chip"
-                android:visibility="visible"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="false"
