@@ -107,7 +107,7 @@ class ProductDetailActivity : AppCompatActivity() {
         if (product != null) {
             with(binding) {
                 Glide.with(this@ProductDetailActivity)
-                    .load(Uri.parse(ProfileActivity.BASE_PROFILE_PICTURE))
+                    .load(Uri.parse(ProfileActivity.BASE_ILLUSTRATION))
                     .into(productDetailSellerProfilePicture)
                 productDetailName.text = product.name
                 productDetailSellerUsername.text = product.user?.username

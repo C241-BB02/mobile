@@ -183,5 +183,29 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/seller_products_header" />
 
+    <ImageView
+        android:id="@+id/seller_empty_products_illustration"
+        android:layout_width="250dp"
+        android:layout_height="120dp"
+        android:layout_marginTop="24dp"
+        android:visibility="gone"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toBottomOf="@id/seller_products_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:contentDescription="Seller empty products illustration" />
+
+    <TextView
+        android:id="@+id/seller_empty_products_description"
+        android:visibility="gone"
+        android:layout_marginTop="24dp"
+        android:fontFamily="@font/rubik_regular"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="You have not created any products."
+        app:layout_constraintTop_toBottomOf="@id/seller_empty_products_illustration"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>

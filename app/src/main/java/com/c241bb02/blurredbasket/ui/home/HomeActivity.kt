@@ -2,6 +2,7 @@ package com.c241bb02.blurredbasket.ui.home
 
 import android.app.ActivityOptions
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.view.Window
@@ -10,6 +11,7 @@ import androidx.activity.addCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
 import com.c241bb02.blurredbasket.data.util.Resource
@@ -105,7 +107,6 @@ class HomeActivity : AppCompatActivity() {
 
                 is Resource.Success -> {
                     stopSkeletonLoader()
-                    binding.homeProductsRecyclerView.visibility = View.VISIBLE
 
                     val productsView = binding.homeProductsRecyclerView
                     val productsAdapter = ProductsListAdapter(it.data!!, showSellerProducts = false)
@@ -119,6 +120,7 @@ class HomeActivity : AppCompatActivity() {
                         }
                     })
                 }
+
 
                 is Resource.Error -> {
                     stopSkeletonLoader()
@@ -142,6 +144,7 @@ class HomeActivity : AppCompatActivity() {
     }
 
     private fun stopSkeletonLoader() {
+        binding.homeProductsRecyclerView.visibility = View.VISIBLE
         binding.shimmerLayout.apply {
             visibility = View.GONE
             stopShimmer()

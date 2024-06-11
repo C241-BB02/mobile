@@ -78,7 +78,7 @@ class ProfileActivity : AppCompatActivity() {
         viewModel.getSession().observe(this) { user ->
             with(binding) {
                 Glide.with(this@ProfileActivity)
-                    .load(Uri.parse(BASE_PROFILE_PICTURE))
+                    .load(Uri.parse(BASE_ILLUSTRATION))
                     .into(userProfilePicture)
                 userProfileRoleChip.text = user.role.lowercase().replaceFirstChar { it.uppercase() }
                 userProfileUsername.text = user.username
@@ -135,23 +135,33 @@ class ProfileActivity : AppCompatActivity() {
 
                 is Resource.Success -> {
                     stopSkeletonLoader()
-                    binding.sellerProductsList.visibility = View.VISIBLE
-
-                    val productsView = binding.sellerProductsList
-                    val productsAdapter =
-                        ProductsListAdapter(it.data!!, showSellerProducts = true)
-
-                    productsView.layoutManager = GridLayoutManager(this, 2)
-                    productsView.adapter = productsAdapter
-                    productsAdapter.setOnItemClickCallback(object :
-                        ProductsListAdapter.OnItemClickCallback {
-                        override fun onItemClicked(
-                            product: GetProductsResponseItem,
-                            view: View
-                        ) {
-                            moveToProductDetailScreen(product, view)
+                    if (it.data!!.isEmpty()) {
+                        with(binding) {
+                            sellerEmptyProductsDescription.visibility = View.VISIBLE
+                            sellerEmptyProductsIllustration.visibility = View.VISIBLE
+                            Glide
+                                .with(this@ProfileActivity)
+                                .load(Uri.parse(BASE_ILLUSTRATION))
+                                .into(sellerEmptyProductsIllustration)
                         }
-                    })
+                    } else {
+                        val productsView = binding.sellerProductsList
+                        val productsAdapter =
+                            ProductsListAdapter(it.data, showSellerProducts = true)
+
+                        productsView.layoutManager = GridLayoutManager(this, 2)
+                        productsView.adapter = productsAdapter
+                        productsAdapter.setOnItemClickCallback(object :
+                            ProductsListAdapter.OnItemClickCallback {
+                            override fun onItemClicked(
+                                product: GetProductsResponseItem,
+                                view: View
+                            ) {
+                                moveToProductDetailScreen(product, view)
+                            }
+                        })
+                    }
+
                 }
 
                 is Resource.Error -> {
@@ -212,7 +222,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val BASE_PROFILE_PICTURE =
+        const val BASE_ILLUSTRATION =
             "https://images.unsplash.com/photo-1605106702842-01a887a31122?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
 }
