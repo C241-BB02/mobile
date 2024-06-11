@@ -83,7 +83,6 @@ class ProductDetailActivity : AppCompatActivity() {
                 val carouselView = binding.productDetailImageCarousel
                 val adapter = ProductDetailCarouselAdapter(product.photos, showImageStatusChips)
 
-
                 val snapHelper = CarouselSnapHelper()
                 snapHelper.attachToRecyclerView(carouselView)
                 val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())

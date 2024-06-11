@@ -14,13 +14,31 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <ImageView
-            android:id="@+id/home_products_item_image"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="150dp"
-            tools:src="@drawable/cleaning_supplies"
-            android:scaleType="centerCrop"
-            android:contentDescription="@string/home_products_list_item_image_content_description" />
+            android:layout_height="wrap_content">
+            <ImageView
+                android:id="@+id/home_products_item_image"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                tools:src="@drawable/cleaning_supplies"
+                android:scaleType="centerCrop"
+                android:contentDescription="@string/home_products_list_item_image_content_description" />
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/seller_product_status_chip"
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:clickable="false"
+                android:text="Status"
+                style="@style/PassImageStatusChip"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="10dp"
+                android:layout_gravity="end"
+                android:textSize="14sp"
+                android:textColor="@color/white"/>
+        </FrameLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

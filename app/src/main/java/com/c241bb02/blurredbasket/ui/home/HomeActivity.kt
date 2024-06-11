@@ -108,7 +108,7 @@ class HomeActivity : AppCompatActivity() {
                     binding.homeProductsRecyclerView.visibility = View.VISIBLE
 
                     val productsView = binding.homeProductsRecyclerView
-                    val productsAdapter = ProductsListAdapter(it.data!!)
+                    val productsAdapter = ProductsListAdapter(it.data!!, showSellerProducts = false)
 
                     productsView.layoutManager = GridLayoutManager(this, 2)
                     productsView.adapter = productsAdapter

@@ -138,7 +138,7 @@ class ProfileActivity : AppCompatActivity() {
                             binding.sellerProductsList.visibility = View.VISIBLE
 
                             val productsView = binding.sellerProductsList
-                            val productsAdapter = ProductsListAdapter(it.data!!)
+                            val productsAdapter = ProductsListAdapter(it.data!!, showSellerProducts = true)
 
                             productsView.layoutManager = GridLayoutManager(this, 2)
                             productsView.adapter = productsAdapter

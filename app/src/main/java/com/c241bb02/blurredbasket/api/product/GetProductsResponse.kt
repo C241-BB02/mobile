@@ -51,7 +51,7 @@ data class GetProductsResponseItem (
 	val stock: Int? = null,
 
 	@field:SerializedName("status")
-	val status: String? = null,
+	val status: String = "",
 
 	@field:SerializedName("description")
 	val description: String? = null,
