@@ -56,9 +56,21 @@
                 android:layout_margin="16dp"
                 android:fontFamily="@font/rubik_regular"
                 android:text="@string/create_product_image_info"
+                android:textColor="@color/blue_900"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/create_product_preview_image_button" />
+
+            <TextView
+                android:id="@+id/create_product_delete_image_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:fontFamily="@font/rubik_regular"
+                android:text="@string/create_product_delete_image_info"
+                android:textColor="@color/blue_900"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/create_product_image_info" />
+
 
             <TextView
                 android:id="@+id/create_product_name_input_label"
@@ -68,7 +80,7 @@
                 android:fontFamily="@font/rubik_medium"
                 android:text="Name"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/create_product_image_info" />
+                app:layout_constraintTop_toBottomOf="@+id/create_product_delete_image_info" />
 
             <EditText
                 android:id="@+id/create_product_name_input"

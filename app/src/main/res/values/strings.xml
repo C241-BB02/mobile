@@ -26,7 +26,8 @@
     <string name="price_label">Price</string>
     <string name="product_price">Product Price</string>
     <string name="carousel_image">Carousel image</string>
-    <string name="create_product_image_info">You must pick at least 3 images. You can pick up to 5 images.</string>
+    <string name="create_product_image_info">You may pick 3 to 5 images.</string>
+    <string name="create_product_delete_image_info">To delete an image, click on the image.</string>
     <string name="product_seller_name">Product Seller Name</string>
     <string name="product_price_placeholder">Product Price</string>
 
