@@ -2,19 +2,15 @@ package com.c241bb02.blurredbasket.ui.register
 
 import android.os.Bundle
 import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.auth.RegisterRequestDto
-import com.c241bb02.blurredbasket.api.auth.RegisterResponse
 import com.c241bb02.blurredbasket.databinding.ActivityRegisterBinding
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
-import com.google.android.material.snackbar.Snackbar
-import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -113,8 +109,7 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun showToast(message: String) {
-        val contextView = findViewById<View>(R.id.register_trigger_button)
-        Snackbar.make(contextView, message, Snackbar.LENGTH_SHORT).show()
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 
     private fun obtainViewModel(activity: AppCompatActivity): RegisterViewModel {
