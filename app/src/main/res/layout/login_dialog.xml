@@ -54,7 +54,7 @@
         style="@style/Custom.EditText"
         android:layout_marginHorizontal="40dp"
         android:layout_marginTop="16dp"
-        android:inputType="textEmailAddress"
+        android:inputType="text"
         android:hint="Username"
         android:autofillHints="text"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
