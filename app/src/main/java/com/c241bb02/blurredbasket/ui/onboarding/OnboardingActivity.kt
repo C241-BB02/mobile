@@ -13,13 +13,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
+import com.c241bb02.blurredbasket.api.auth.LoginErrorResponse
 import com.c241bb02.blurredbasket.api.auth.LoginRequestDto
+import com.c241bb02.blurredbasket.api.auth.RegisterErrorResponse
 import com.c241bb02.blurredbasket.databinding.ActivityOnboardingBinding
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.register.RegisterActivity
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -93,12 +96,22 @@ class OnboardingActivity : AppCompatActivity() {
             if (loginInputIsValid(dto)) {
                 lifecycleScope.launch {
                     try {
+                        loginTriggerButton.isEnabled = false
                         viewModel.login(dto)
-                        moveToHomeScreen()
+                        loginTriggerButton.isEnabled = true
                         dialog.dismiss()
                         showToast("Login successful!")
                     } catch (e: HttpException) {
-                        showToast("An error occurred while logging in. Please try again.")
+                        loginTriggerButton.isEnabled = true
+                        val errorBody = e.response()?.errorBody()?.string()
+                        val gson = Gson()
+                        val errorResponse: LoginErrorResponse? = gson.fromJson(errorBody, LoginErrorResponse::class.java)
+
+                        if (errorResponse != null) {
+                            errorResponse.detail?.let { message -> showToast(message) }
+                        } else {
+                            showToast("An error occurred while registering. Please try again.")
+                        }
                     }
                 }
             }

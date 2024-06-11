@@ -74,6 +74,7 @@ class RegisterActivity : AppCompatActivity() {
                 showToast("Register successful!")
                 onBackPressedDispatcher.onBackPressed()
             } catch (e: HttpException) {
+                binding.registerTriggerButton.isEnabled = true
                 val errorBody = e.response()?.errorBody()?.string()
                 val gson = Gson()
                 val errorResponse: RegisterErrorResponse? = gson.fromJson(errorBody, RegisterErrorResponse::class.java)
