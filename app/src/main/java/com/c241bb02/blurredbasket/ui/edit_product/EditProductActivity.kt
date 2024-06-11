@@ -11,6 +11,7 @@ import android.view.Window
 import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -74,6 +75,7 @@ class EditProductActivity : AppCompatActivity() {
         setupImageCarousel()
         setupDefaultState()
         setupButtons()
+        handleInputsChanges()
     }
 
     private fun setupDefaultState() {
@@ -87,6 +89,60 @@ class EditProductActivity : AppCompatActivity() {
                 editProductCategoryInput.setText(product.category)
                 editProductPriceInput.setText(product.price.toString())
                 editProductStockInput.setText(product.stock.toString())
+            }
+        }
+    }
+
+    private fun handleInputsChanges() {
+        with(binding) {
+            editProductNameInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null && text.isEmpty()) {
+                    editProductNameInput.error = "Required"
+                }
+            }
+
+            editProductDescriptionInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null && text.isEmpty()) {
+                    editProductDescriptionInput.error = "Required"
+                }
+            }
+
+            editProductCategoryInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null && text.isEmpty()) {
+                    editProductCategoryInput.error = "Required"
+                }
+            }
+
+            editProductPriceInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null) {
+                    if (text.isEmpty()) {
+                        editProductPriceInput.error = "Required"
+                    } else {
+                        try {
+                            if (text.toString().toInt() < 0) {
+                                editProductPriceInput.error = "Price must be at least 0"
+                            }
+                        } catch (e: NumberFormatException) {
+                            editProductPriceInput.error = "Value too high"
+                        }
+                    }
+                }
+            }
+
+            editProductStockInput.doOnTextChanged { text, _, _, _ ->
+                if (text != null) {
+                    if (text.isEmpty()) {
+                        editProductStockInput.error = "Required"
+                    } else {
+                        try {
+                            if (text.toString().toInt() < 0) {
+                                editProductStockInput.error = "Stock must be at least 0"
+                            }
+                        } catch (e: NumberFormatException) {
+                            editProductStockInput.error = "Value too high"
+                        }
+                    }
+                }
             }
         }
     }
@@ -242,14 +298,27 @@ class EditProductActivity : AppCompatActivity() {
             showToast("You must enter a product category.")
             return false
         }
-        if (stock.toInt() <= 0) {
-            showToast("Product stock must be greater than 0.")
+
+        try {
+            if (price.toInt() < 0) {
+                showToast("Product price cannot be negative.")
+                return false
+            }
+        } catch (e: NumberFormatException) {
+            showToast("Product price is too high.")
             return false
         }
-        if (price.isEmpty()) {
-            showToast("You must enter a product price.")
+
+        try {
+            if (stock.toInt() < 0) {
+                showToast("Product stock cannot be negative.")
+                return false
+            }
+        } catch (e: NumberFormatException) {
+            showToast("Product stock is too high.")
             return false
         }
+
         if (price.toInt() < 0) {
             showToast("Product price cannot be negative.")
             return false

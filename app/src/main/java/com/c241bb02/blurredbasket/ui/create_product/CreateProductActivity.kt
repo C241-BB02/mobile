@@ -92,8 +92,14 @@ class CreateProductActivity : AppCompatActivity() {
                 if (text != null) {
                     if (text.isEmpty()) {
                         createProductPriceInput.error = "Required"
-                    } else if (text.toString().toInt() < 0) {
-                        createProductPriceInput.error = "Price must be at least 0"
+                    } else {
+                        try {
+                            if (text.toString().toInt() < 0) {
+                                createProductPriceInput.error = "Price must be at least 0"
+                            }
+                        } catch (e: NumberFormatException) {
+                            createProductPriceInput.error = "Value too high"
+                        }
                     }
                 }
             }
@@ -102,15 +108,19 @@ class CreateProductActivity : AppCompatActivity() {
                 if (text != null) {
                     if (text.isEmpty()) {
                         createProductStockInput.error = "Required"
-                    } else if (text.toString().toInt() <= 0) {
-                        createProductStockInput.error = "Stock must be greater than 0"
+                    } else {
+                        try {
+                            if (text.toString().toInt() < 0) {
+                                createProductStockInput.error = "Stock must be at least 0"
+                            }
+                        } catch (e: NumberFormatException) {
+                            createProductStockInput.error = "Value too high"
+                        }
                     }
                 }
             }
         }
-
     }
-
 
     private fun setDefaultBackBehavior() {
         onBackPressedDispatcher.addCallback(this) {
@@ -228,18 +238,32 @@ class CreateProductActivity : AppCompatActivity() {
             showToast("You must enter a product category.")
             return false
         }
-        if (stock.toInt() <= 0) {
-            showToast("Product stock must be greater than 0.")
-            return false
-        }
         if (price.isEmpty()) {
             showToast("You must enter a product price.")
             return false
         }
-        if (price.toInt() < 0) {
-            showToast("Product price cannot be negative.")
+
+        try {
+            if (price.toInt() < 0) {
+                showToast("Product price cannot be negative.")
+                return false
+            }
+        } catch (e: NumberFormatException) {
+            showToast("Product price is too high.")
             return false
         }
+
+        try {
+            if (stock.toInt() < 0) {
+                showToast("Product stock cannot be negative.")
+                return false
+            }
+        } catch (e: NumberFormatException) {
+            showToast("Product stock is too high.")
+            return false
+        }
+
+
         if (description.isEmpty()) {
             showToast("You must enter a product category.")
             return false
