@@ -61,7 +61,7 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun setDefaultBackBehavior() {
         onBackPressedDispatcher.addCallback(this) {
             val previousActivity = intent.getStringExtra(EXTRA_PREVIOUS_ACTIVITY)
-            if (previousActivity == "profile" || previousActivity == "create" || previousActivity == "update") {
+            if (previousActivity == "profile" || previousActivity == "create" || previousActivity == "edit") {
                 moveToProfileScreen()
             } else {
                 moveToHomeScreen()
