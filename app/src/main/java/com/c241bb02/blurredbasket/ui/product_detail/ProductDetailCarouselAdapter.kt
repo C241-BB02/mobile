@@ -37,13 +37,13 @@ class ProductDetailCarouselAdapter(private val imageList: List<String>): Recycle
                     .into(homeCarouselItemImage)
 
                 itemView.setOnClickListener {
-                    onItemClickCallback.onItemClicked(it)
+                    onItemClickCallback.onItemClicked(it, layoutPosition)
                 }
             }
         }
     }
 
     interface OnItemClickCallback {
-        fun onItemClicked(view: View)
+        fun onItemClicked(view: View, position: Int)
     }
 }

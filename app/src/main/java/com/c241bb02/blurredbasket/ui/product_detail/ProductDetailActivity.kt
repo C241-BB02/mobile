@@ -90,8 +90,8 @@ class ProductDetailActivity : AppCompatActivity() {
             carouselView.layoutManager = carouselLayoutManager
             carouselView.adapter = adapter
             adapter.setOnItemClickCallback(object: ProductDetailCarouselAdapter.OnItemClickCallback {
-                override fun onItemClicked(view: View) {
-                    openImageViewer(images)
+                override fun onItemClicked(view: View, position: Int) {
+                    openImageViewer(images, position)
                 }
             })
         }
@@ -154,13 +154,14 @@ class ProductDetailActivity : AppCompatActivity() {
         }
     }
 
-    private fun openImageViewer(images: List<String>) {
+    private fun openImageViewer(images: List<String>, position: Int) {
         StfalconImageViewer.Builder(this, images) { view, image ->
             Glide.with(view.context)
                 .load(Uri.parse(image))
                 .into(view)
         }
             .withBackgroundColor(ContextCompat.getColor(this, R.color.blue_100))
+            .withStartPosition(position)
             .show()
     }
 
