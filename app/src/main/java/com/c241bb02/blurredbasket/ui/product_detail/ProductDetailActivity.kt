@@ -1,5 +1,6 @@
 package com.c241bb02.blurredbasket.ui.product_detail
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Build
@@ -102,6 +103,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupProductDetails() {
         val product = getProductParcelableExtra()
         if (product != null) {
@@ -112,6 +114,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 productDetailName.text = product.name
                 productDetailSellerUsername.text = product.user?.username
                 productCategoryChip.text = product.category
+                productStockChip.text = "Stock: ${product.stock}"
                 productDescriptionText.text = product.description
                 productDetailProductPrice.text = product.price?.let { numberToRupiah(it) }
             }

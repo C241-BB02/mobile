@@ -37,6 +37,12 @@
         <item name="android:textAppearance">@style/CustomChipFontFamily</item>
     </style>
 
+    <style name="ProductStockChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/blue_900</item>
+        <item name="android:textColor">@color/blue_50</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
+    </style>
+
     <style name="PassImageStatusChip" parent="Widget.MaterialComponents.Chip.Filter">
         <item name="chipBackgroundColor">#66BB6A</item>
         <item name="android:textAppearance">@style/CustomChipFontFamily</item>

@@ -128,6 +128,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
 
+            <com.google.android.material.chip.Chip
+                android:id="@+id/product_stock_chip"
+                style="@style/ProductStockChip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:clickable="false"
+                android:text="Stock"
+                android:textSize="16sp"
+                app:layout_constraintStart_toEndOf="@+id/product_category_chip"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
     <TextView
         android:id="@+id/product_description_header"
         android:layout_width="wrap_content"
