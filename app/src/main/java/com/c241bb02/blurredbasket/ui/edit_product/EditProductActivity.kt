@@ -59,6 +59,7 @@ class EditProductActivity : AppCompatActivity() {
     private lateinit var selectedImages: ArrayList<Uri>
     private lateinit var viewModel: EditProductViewModel
     private var downloadedImages = mutableMapOf<String, File>()
+    private var hasEditedImages = false
 
     private var adapter: EditProductCarouselAdapter? = null
 
@@ -212,24 +213,28 @@ class EditProductActivity : AppCompatActivity() {
                         val price = createRequestBody(priceText)
                         val stock = createRequestBody(stockText)
 
-                        val photoFiles = downloadedImages.filter { true }
-                        val photos = ArrayList(photoFiles.map {
-                            val requestImageFile =
-                                it.value.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                            MultipartBody.Part.createFormData("photos", it.value.name, requestImageFile)
-                        })
-                        val newPhotos =
-                            ArrayList(filledUris.filter { !it.toString().startsWith("http") }.map {
-                                val file = uriToFile(
-                                    it,
-                                    this@EditProductActivity
-                                )
+                        var photos: ArrayList<MultipartBody.Part> = arrayListOf()
+                        if (hasEditedImages) {
+                            val photoFiles = downloadedImages.filter { true }
+                            photos = ArrayList(photoFiles.map {
                                 val requestImageFile =
-                                    file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                                MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
+                                    it.value.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                                MultipartBody.Part.createFormData("photos", it.value.name, requestImageFile)
                             })
+                            val newPhotos =
+                                ArrayList(filledUris.filter { !it.toString().startsWith("http") }.map {
+                                    val file = uriToFile(
+                                        it,
+                                        this@EditProductActivity
+                                    )
+                                    val requestImageFile =
+                                        file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                                    MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
+                                })
 
-                        photos.addAll(newPhotos)
+                            photos.addAll(newPhotos)
+                        }
+
 
                         viewModel.updateProduct(id, photos, name, category, stock, price, description)
                             .observe(this@EditProductActivity) {
@@ -244,7 +249,7 @@ class EditProductActivity : AppCompatActivity() {
                                         if (response != null) {
                                             val numberOfPasses =
                                                 response.photos.filter { photo -> photo.status != "Blur" }.size
-                                            if (response.status.equals("ACCEPTED")) {
+                                            if (response.status == "ACCEPTED") {
                                                 val message = if (numberOfPasses < response.photos.size)
                                                     "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
                                                 else
@@ -459,6 +464,7 @@ class EditProductActivity : AppCompatActivity() {
                     selectedImages.add(Uri.EMPTY)
                     downloadedImages.remove(image.toString())
                     adapter?.updateData(itemPosition, selectedImages)
+                    hasEditedImages = true
                 }
             }
             )
@@ -519,6 +525,7 @@ class EditProductActivity : AppCompatActivity() {
             }
             adapter?.updateData(0, selectedImages)
             showToast("You have selected ${uris.size} photos.")
+            hasEditedImages = true
         }
     }
 
