@@ -59,7 +59,7 @@ interface ApiService {
     ): Call<GetProductsResponseItem>
 
     @DELETE("product/delete/{productCode}/")
-    suspend fun deleteProduct(
+    fun deleteProduct(
         @Path("productCode") productCode: String
-    ): DeleteProductResponse
+    ): Call<DeleteProductResponse>
 }

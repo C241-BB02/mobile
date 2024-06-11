@@ -7,6 +7,7 @@ import com.c241bb02.blurredbasket.api.product.DeleteProductResponse
 import com.c241bb02.blurredbasket.data.pref.UserModel
 import com.c241bb02.blurredbasket.data.repository.ProductRepository
 import com.c241bb02.blurredbasket.data.repository.UserRepository
+import com.c241bb02.blurredbasket.data.util.Resource
 import retrofit2.Call
 
 class ProductDetailViewModel(
@@ -17,7 +18,7 @@ class ProductDetailViewModel(
         return userRepository.getSession().asLiveData()
     }
 
-    suspend fun deleteProduct(productCode: String): DeleteProductResponse {
+    fun deleteProduct(productCode: String): LiveData<Resource<DeleteProductResponse>?> {
         return productRepository.deleteProduct(productCode)
     }
 }

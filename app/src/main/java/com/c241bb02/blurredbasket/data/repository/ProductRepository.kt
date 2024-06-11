@@ -29,6 +29,9 @@ class ProductRepository(
     private val _updateProductResponse = MutableLiveData<Resource<GetProductsResponseItem>?>()
     private val updateProductResponse: LiveData<Resource<GetProductsResponseItem>?> = _updateProductResponse
 
+    private val _deleteProductResponse = MutableLiveData<Resource<DeleteProductResponse>?>()
+    private val deleteProductResponse: LiveData<Resource<DeleteProductResponse>?> = _deleteProductResponse
+
     fun getProducts(): LiveData<Resource<List<GetProductsResponseItem>>?> {
         _products.value = Resource.Loading()
         val client = apiService.getProducts()
@@ -155,11 +158,34 @@ class ProductRepository(
         })
 
         return updateProductResponse
-
     }
 
-    suspend fun deleteProduct(productCode: String): DeleteProductResponse {
-        return apiService.deleteProduct(productCode)
+    fun deleteProduct(productCode: String): LiveData<Resource<DeleteProductResponse>?> {
+        _deleteProductResponse.value = Resource.Loading()
+        val client = apiService.deleteProduct(productCode)
+        client.enqueue(object : Callback<DeleteProductResponse> {
+            override fun onResponse(
+                call: Call<DeleteProductResponse>,
+                response: Response<DeleteProductResponse>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        _deleteProductResponse.value = Resource.Success(responseBody)
+                    }
+                } else {
+                    _deleteProductResponse.value = Resource.Error(response.message())
+                    Log.e(TAG, "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<DeleteProductResponse>, t: Throwable) {
+                _deleteProductResponse.value = Resource.Error(t.message.toString())
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
+
+        return deleteProductResponse
     }
 
     fun updateToken(token: String) {

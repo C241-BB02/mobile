@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
+import com.c241bb02.blurredbasket.data.util.Resource
 import com.c241bb02.blurredbasket.databinding.ActivityProductDetailBinding
 import com.c241bb02.blurredbasket.ui.edit_product.EditProductActivity
 import com.c241bb02.blurredbasket.ui.home.HomeActivity
@@ -173,22 +174,52 @@ class ProductDetailActivity : AppCompatActivity() {
             val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
 
             deleteTriggerButton.setOnClickListener {
-                try {
-                    lifecycleScope.launch {
-                        viewModel.deleteProduct(product.code ?: "")
-                        showToast("Product successfully deleted.")
-                        moveToProfileScreen()
-                        dialog.dismiss()
+                viewModel.deleteProduct(product.code).observe(this@ProductDetailActivity) {
+                    when (it) {
+                        is Resource.Loading -> {
+                            showDeleteProductLoadingState(view)
+                        }
+                        is Resource.Success -> {
+                            stopDeleteProductLoadingState(view)
+                            showToast("Product successfully deleted.")
+                            moveToProfileScreen()
+                            dialog.dismiss()
+                        }
+                        is Resource.Error -> {
+                            stopDeleteProductLoadingState(view)
+                            showToast("An error occurred while deleting product. Please try again.")
+                            dialog.dismiss()
+                        }
+                        else -> {
+                            stopDeleteProductLoadingState(view)
+                            showToast("An error occurred while deleting product. Please try again.")
+                            dialog.dismiss()
+                        }
                     }
-                } catch (e: HttpException) {
-                    showToast("An error occurred while deleting the product. Please try again.")
                 }
-
             }
             cancelDeleteTriggerButton.setOnClickListener {
                 dialog.dismiss()
             }
         }
+    }
+
+    private fun showDeleteProductLoadingState(view: View) {
+        val deleteTriggerButton = view.findViewById<Button>(R.id.delete_trigger_button)
+        val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
+
+        deleteTriggerButton.isEnabled = false
+        deleteTriggerButton.text = "Deleting product..."
+        cancelDeleteTriggerButton.isEnabled = false
+    }
+
+    private fun stopDeleteProductLoadingState(view: View) {
+        val deleteTriggerButton = view.findViewById<Button>(R.id.delete_trigger_button)
+        val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
+
+        deleteTriggerButton.isEnabled = true
+        deleteTriggerButton.text = "Delete Product"
+        cancelDeleteTriggerButton.isEnabled = true
     }
 
     private fun moveToEditProductScreen() {
