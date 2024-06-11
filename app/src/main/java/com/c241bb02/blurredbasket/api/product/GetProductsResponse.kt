@@ -17,7 +17,7 @@ data class PhotosItem(
 	val id: String = "",
 
 	@field:SerializedName("status")
-	val status: String? = null
+	val status: String = ""
 ): Parcelable
 
 @Parcelize

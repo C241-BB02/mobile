@@ -1,14 +1,20 @@
 package com.c241bb02.blurredbasket.ui.product_detail
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.c241bb02.blurredbasket.R
+import com.c241bb02.blurredbasket.api.product.PhotosItem
 import com.c241bb02.blurredbasket.databinding.CarouselListItemBinding
 
-class ProductDetailCarouselAdapter(private val imageList: List<String>): RecyclerView.Adapter<ProductDetailCarouselAdapter.ViewHolder>() {
+class ProductDetailCarouselAdapter(
+    private val imageList: List<PhotosItem>,
+    private val showImageStatusChips: Boolean
+) : RecyclerView.Adapter<ProductDetailCarouselAdapter.ViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
     fun setOnItemClickCallback(onItemClickCallback: OnItemClickCallback) {
@@ -16,7 +22,8 @@ class ProductDetailCarouselAdapter(private val imageList: List<String>): Recycle
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = CarouselListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            CarouselListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return ViewHolder(binding)
     }
 
@@ -29,15 +36,27 @@ class ProductDetailCarouselAdapter(private val imageList: List<String>): Recycle
         return imageList.size
     }
 
-    inner class ViewHolder(private val binding: CarouselListItemBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(image: String) {
+    inner class ViewHolder(private val binding: CarouselListItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("ResourceAsColor")
+        fun bind(photo: PhotosItem) {
             with(binding) {
                 Glide.with(itemView.context)
-                    .load(Uri.parse(image))
+                    .load(Uri.parse(photo.image))
                     .into(homeCarouselItemImage)
 
-                itemView.setOnClickListener {
-                    onItemClickCallback.onItemClicked(it, layoutPosition)
+                if (showImageStatusChips) {
+                    imageStatusChip.visibility = View.VISIBLE
+                    imageStatusChip.text = photo.status
+                    if (photo.status == "Blur") {
+                        imageStatusChip.setBackgroundColor(R.color.red)
+                    } else {
+                        imageStatusChip.setBackgroundColor(R.color.green)
+                    }
+
+                    itemView.setOnClickListener {
+                        onItemClickCallback.onItemClicked(it, layoutPosition)
+                    }
                 }
             }
         }

@@ -75,27 +75,32 @@ class ProductDetailActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    private fun setupImageCarousel(){
-        val product = getProductParcelableExtra()
+    private fun setupImageCarousel() {
+        viewModel.getSession().observe(this) { user ->
+            val product = getProductParcelableExtra()
+            if (product != null) {
+                val showImageStatusChips = product.user?.id == user.id
+                val carouselView = binding.productDetailImageCarousel
+                val adapter = ProductDetailCarouselAdapter(product.photos, showImageStatusChips)
 
-        if (product != null) {
-            val images = product.photos.map { it.image }
-            val carouselView = binding.productDetailImageCarousel
-            val adapter = ProductDetailCarouselAdapter(images)
 
-            val snapHelper = CarouselSnapHelper()
-            snapHelper.attachToRecyclerView(carouselView)
-            val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
-            carouselLayoutManager.carouselAlignment = CarouselLayoutManager.ALIGNMENT_CENTER
+                val snapHelper = CarouselSnapHelper()
+                snapHelper.attachToRecyclerView(carouselView)
+                val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
+                carouselLayoutManager.carouselAlignment = CarouselLayoutManager.ALIGNMENT_CENTER
 
-            carouselView.layoutManager = carouselLayoutManager
-            carouselView.adapter = adapter
-            adapter.setOnItemClickCallback(object: ProductDetailCarouselAdapter.OnItemClickCallback {
-                override fun onItemClicked(view: View, position: Int) {
-                    openImageViewer(images, position)
-                }
-            })
+                carouselView.layoutManager = carouselLayoutManager
+                carouselView.adapter = adapter
+                adapter.setOnItemClickCallback(object :
+                    ProductDetailCarouselAdapter.OnItemClickCallback {
+                    override fun onItemClicked(view: View, position: Int) {
+                        val images = product.photos.map { it.image }
+                        openImageViewer(images, position)
+                    }
+                })
+            }
         }
+
     }
 
     private fun setupProductDetails() {
@@ -133,8 +138,10 @@ class ProductDetailActivity : AppCompatActivity() {
                 moveToEditProductScreen()
             }
             productDetailDeleteButton.setOnClickListener {
-                val dialog = BottomSheetDialog(this@ProductDetailActivity, R.style.CustomBottomSheetDialog)
-                val view = LayoutInflater.from(this@ProductDetailActivity).inflate(R.layout.delete_product_dialog, null)
+                val dialog =
+                    BottomSheetDialog(this@ProductDetailActivity, R.style.CustomBottomSheetDialog)
+                val view = LayoutInflater.from(this@ProductDetailActivity)
+                    .inflate(R.layout.delete_product_dialog, null)
                 dialog.setContentView(view)
                 setupDeleteProductDialog(dialog, view)
                 dialog.show()
@@ -171,7 +178,8 @@ class ProductDetailActivity : AppCompatActivity() {
 
         if (product != null) {
             val deleteTriggerButton = view.findViewById<Button>(R.id.delete_trigger_button)
-            val cancelDeleteTriggerButton = view.findViewById<Button>(R.id.cancel_delete_trigger_button)
+            val cancelDeleteTriggerButton =
+                view.findViewById<Button>(R.id.cancel_delete_trigger_button)
 
             deleteTriggerButton.setOnClickListener {
                 viewModel.deleteProduct(product.code).observe(this@ProductDetailActivity) {
@@ -179,17 +187,20 @@ class ProductDetailActivity : AppCompatActivity() {
                         is Resource.Loading -> {
                             showDeleteProductLoadingState(view)
                         }
+
                         is Resource.Success -> {
                             stopDeleteProductLoadingState(view)
                             showToast("Product successfully deleted.")
                             moveToProfileScreen()
                             dialog.dismiss()
                         }
+
                         is Resource.Error -> {
                             stopDeleteProductLoadingState(view)
                             showToast("An error occurred while deleting product. Please try again.")
                             dialog.dismiss()
                         }
+
                         else -> {
                             stopDeleteProductLoadingState(view)
                             showToast("An error occurred while deleting product. Please try again.")
@@ -245,7 +256,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
         }
 
-        window.sharedElementReturnTransition  = MaterialContainerTransform().apply {
+        window.sharedElementReturnTransition = MaterialContainerTransform().apply {
             addTarget(android.R.id.content)
             duration = 400L
         }
