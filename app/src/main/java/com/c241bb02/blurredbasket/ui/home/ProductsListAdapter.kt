@@ -44,20 +44,25 @@ class ProductsListAdapter(
         @SuppressLint("ResourceAsColor")
         fun bind(product: GetProductsResponseItem) {
             with(binding) {
-                Glide.with(itemView.context)
-                    .load(Uri.parse(product.photos[0].image))
-                    .into(homeProductsItemImage)
-
                 homeProductsItemName.text = product.name
                 homeProductsItemPrice.text = product.price?.let { numberToRupiah(it) }
 
                 if (showSellerProducts) {
+                    Glide.with(itemView.context)
+                        .load(Uri.parse(product.photos[0].image))
+                        .into(homeProductsItemImage)
+
                     homeProductsItemSellerName.visibility = View.GONE
                     sellerProductStatusChip.visibility = View.VISIBLE
                     sellerProductStatusChip.text = product.status.lowercase().replaceFirstChar { it.uppercase() }
                     val chipColor = if (product.status == "ACCEPTED") R.color.green else R.color.red
                     sellerProductStatusChip.setChipBackgroundColorResource(chipColor)
                 } else {
+                    val image = product.photos.find { it.status != "Blur" }?.image
+                    Glide.with(itemView.context)
+                        .load(Uri.parse(image))
+                        .into(homeProductsItemImage)
+
                     homeProductsItemSellerName.text = product.user?.username
                 }
 

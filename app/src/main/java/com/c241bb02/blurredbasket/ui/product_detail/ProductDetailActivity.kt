@@ -80,9 +80,12 @@ class ProductDetailActivity : AppCompatActivity() {
         viewModel.getSession().observe(this) { user ->
             val product = getProductParcelableExtra()
             if (product != null) {
-                val showImageStatusChips = product.user?.id == user.id
+                val isOwnerOfProduct = product.user?.id == user.id
                 val carouselView = binding.productDetailImageCarousel
-                val adapter = ProductDetailCarouselAdapter(product.photos, showImageStatusChips)
+                val shownImages =
+                    if (isOwnerOfProduct) product.photos
+                    else product.photos.filter { it.status != "Blur" }
+                val adapter = ProductDetailCarouselAdapter(shownImages, isOwnerOfProduct)
 
                 val snapHelper = CarouselSnapHelper()
                 snapHelper.attachToRecyclerView(carouselView)
@@ -94,7 +97,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 adapter.setOnItemClickCallback(object :
                     ProductDetailCarouselAdapter.OnItemClickCallback {
                     override fun onItemClicked(view: View, position: Int) {
-                        val images = product.photos.map { it.image }
+                        val images = shownImages.map { it.image }
                         openImageViewer(images, position)
                     }
                 })

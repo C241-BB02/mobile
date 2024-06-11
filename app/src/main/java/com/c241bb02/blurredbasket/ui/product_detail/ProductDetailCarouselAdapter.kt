@@ -13,7 +13,7 @@ import com.c241bb02.blurredbasket.databinding.CarouselListItemBinding
 
 class ProductDetailCarouselAdapter(
     private val imageList: List<PhotosItem>,
-    private val showImageStatusChips: Boolean
+    private val isOwnerOfProduct: Boolean
 ) : RecyclerView.Adapter<ProductDetailCarouselAdapter.ViewHolder>() {
     private lateinit var onItemClickCallback: OnItemClickCallback
 
@@ -45,7 +45,7 @@ class ProductDetailCarouselAdapter(
                     .load(Uri.parse(photo.image))
                     .into(homeCarouselItemImage)
 
-                if (showImageStatusChips) {
+                if (isOwnerOfProduct) {
                     imageStatusChip.visibility = View.VISIBLE
                     imageStatusChip.text = photo.status
                     if (photo.status == "Blur") {
