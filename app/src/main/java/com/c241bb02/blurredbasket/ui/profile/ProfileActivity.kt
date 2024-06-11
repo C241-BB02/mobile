@@ -44,7 +44,6 @@ class ProfileActivity : AppCompatActivity() {
         setupButtons()
         setupUserData()
         handleRoleBasedComponents()
-        setupSellerProductsList()
     }
 
     private fun setDefaultBackBehavior() {
@@ -64,8 +63,10 @@ class ProfileActivity : AppCompatActivity() {
                 onBackPressedDispatcher.onBackPressed()
             }
             logoutButton.setOnClickListener {
-                val dialog = BottomSheetDialog(this@ProfileActivity, R.style.CustomBottomSheetDialog)
-                val view = LayoutInflater.from(this@ProfileActivity).inflate(R.layout.logout_dialog, null)
+                val dialog =
+                    BottomSheetDialog(this@ProfileActivity, R.style.CustomBottomSheetDialog)
+                val view =
+                    LayoutInflater.from(this@ProfileActivity).inflate(R.layout.logout_dialog, null)
                 dialog.setContentView(view)
                 setupLogoutDialog(dialog, view)
                 dialog.show()
@@ -89,9 +90,14 @@ class ProfileActivity : AppCompatActivity() {
     private fun handleRoleBasedComponents() {
         viewModel.getSession().observe(this) { user ->
             with(binding) {
-                if (user.role == "CUSTOMER") {
-                    sellerProductsHeader.visibility = View.GONE
-                    sellerProductsList.visibility = View.GONE
+                if (user != null) {
+                    if (user.role == "CUSTOMER") {
+                        sellerProductsHeader.visibility = View.GONE
+                        sellerProductsList.visibility = View.GONE
+                        stopSkeletonLoader()
+                    } else if (user.role == "SELLER") {
+                        setupSellerProductsList(user.id)
+                    }
                 }
             }
         }
@@ -120,49 +126,46 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupSellerProductsList() {
-        viewModel.getSession().observe(this) { user ->
-            if (user != null && user.role == "SELLER") {
-                binding.profileShimmerLayout.apply {
-                    visibility = View.VISIBLE
-                    startShimmer()
+    private fun setupSellerProductsList(sellerId: String) {
+        viewModel.getSellerProducts(sellerId).observe(this) {
+            when (it) {
+                is Resource.Loading -> {
+                    startSkeletonLoader()
                 }
-                viewModel.getSellerProducts(user.id).observe(this) {
-                    when (it) {
-                        is Resource.Loading -> {
-                            startSkeletonLoader()
+
+                is Resource.Success -> {
+                    stopSkeletonLoader()
+                    binding.sellerProductsList.visibility = View.VISIBLE
+
+                    val productsView = binding.sellerProductsList
+                    val productsAdapter =
+                        ProductsListAdapter(it.data!!, showSellerProducts = true)
+
+                    productsView.layoutManager = GridLayoutManager(this, 2)
+                    productsView.adapter = productsAdapter
+                    productsAdapter.setOnItemClickCallback(object :
+                        ProductsListAdapter.OnItemClickCallback {
+                        override fun onItemClicked(
+                            product: GetProductsResponseItem,
+                            view: View
+                        ) {
+                            moveToProductDetailScreen(product, view)
                         }
+                    })
+                }
 
-                        is Resource.Success -> {
-                            stopSkeletonLoader()
-                            binding.sellerProductsList.visibility = View.VISIBLE
+                is Resource.Error -> {
+                    stopSkeletonLoader()
+                    showToast("An error occurred while getting products.")
+                }
 
-                            val productsView = binding.sellerProductsList
-                            val productsAdapter = ProductsListAdapter(it.data!!, showSellerProducts = true)
-
-                            productsView.layoutManager = GridLayoutManager(this, 2)
-                            productsView.adapter = productsAdapter
-                            productsAdapter.setOnItemClickCallback(object :
-                                ProductsListAdapter.OnItemClickCallback {
-                                override fun onItemClicked(product: GetProductsResponseItem, view: View) {
-                                    moveToProductDetailScreen(product, view)
-                                }
-                            })
-                        }
-
-                        is Resource.Error -> {
-                            stopSkeletonLoader()
-                            showToast("An error occurred while getting products.")
-                        }
-
-                        else -> {
-                            stopSkeletonLoader()
-                            showToast("An error occurred while getting products.")
-                        }
-                    }
+                else -> {
+                    stopSkeletonLoader()
+                    showToast("An error occurred while getting products.")
                 }
             }
         }
+
     }
 
     private fun startSkeletonLoader() {
@@ -174,6 +177,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun stopSkeletonLoader() {
+        binding.sellerProductsList.visibility = View.VISIBLE
         binding.profileShimmerLayout.apply {
             visibility = View.GONE
             stopShimmer()
@@ -208,6 +212,7 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val BASE_PROFILE_PICTURE = "https://images.unsplash.com/photo-1605106702842-01a887a31122?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+        const val BASE_PROFILE_PICTURE =
+            "https://images.unsplash.com/photo-1605106702842-01a887a31122?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
     }
 }

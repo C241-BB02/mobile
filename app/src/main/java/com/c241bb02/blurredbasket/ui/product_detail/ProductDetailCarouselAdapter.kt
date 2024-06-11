@@ -53,10 +53,10 @@ class ProductDetailCarouselAdapter(
                     } else {
                         imageStatusChip.setBackgroundColor(R.color.green)
                     }
+                }
 
-                    itemView.setOnClickListener {
-                        onItemClickCallback.onItemClicked(it, layoutPosition)
-                    }
+                itemView.setOnClickListener {
+                    onItemClickCallback.onItemClicked(it, layoutPosition)
                 }
             }
         }
