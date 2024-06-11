@@ -92,15 +92,15 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/product_detail_image_carousel">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/product_detail_seller_profile_picture"
+                <ImageView
+                    android:id="@+id/product_seller_username_avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:layout_gravity="center"
                     android:scaleType="centerCrop"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
-                    tools:src="@tools:sample/avatars" />
+                    android:gravity="center"
+                    android:fontFamily="@font/rubik_medium"
+                    android:textSize="18sp"
+                    android:contentDescription="Seller Avatar" />
 
                 <TextView
                     android:id="@+id/product_detail_seller_username"

@@ -107,8 +107,8 @@ class ProductDetailActivity : AppCompatActivity() {
         if (product != null) {
             with(binding) {
                 Glide.with(this@ProductDetailActivity)
-                    .load(Uri.parse(ProfileActivity.BASE_ILLUSTRATION))
-                    .into(productDetailSellerProfilePicture)
+                    .load(Uri.parse("${ProfileActivity.AVATAR_GENERATOR_URL}?username=${product.user?.username}"))
+                    .into(productSellerUsernameAvatar)
                 productDetailName.text = product.name
                 productDetailSellerUsername.text = product.user?.username
                 productCategoryChip.text = product.category
