@@ -118,6 +118,7 @@
 
     <com.google.android.material.chip.Chip
         android:id="@+id/product_category_chip"
+        android:clickable="false"
         style="@style/ProductCategoryChip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
