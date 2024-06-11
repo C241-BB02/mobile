@@ -111,6 +111,7 @@ class ProductDetailActivity : AppCompatActivity() {
                     .into(productDetailSellerProfilePicture)
                 productDetailName.text = product.name
                 productDetailSellerUsername.text = product.user?.username
+                productCategoryChip.text = product.category
                 productDescriptionText.text = product.description
                 productDetailProductPrice.text = product.price?.let { numberToRupiah(it) }
             }
