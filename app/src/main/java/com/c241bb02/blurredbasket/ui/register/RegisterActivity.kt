@@ -7,10 +7,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.c241bb02.blurredbasket.R
+import com.c241bb02.blurredbasket.api.auth.RegisterErrorResponse
 import com.c241bb02.blurredbasket.api.auth.RegisterRequestDto
 import com.c241bb02.blurredbasket.databinding.ActivityRegisterBinding
 import com.c241bb02.blurredbasket.ui.utils.setupStatusBar
 import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
 
@@ -66,11 +68,25 @@ class RegisterActivity : AppCompatActivity() {
     private fun register(dto: RegisterRequestDto) {
         lifecycleScope.launch {
             try {
+                binding.registerTriggerButton.isEnabled = false
                 viewModel.register(dto)
+                binding.registerTriggerButton.isEnabled = true
                 showToast("Register successful!")
                 onBackPressedDispatcher.onBackPressed()
             } catch (e: HttpException) {
-                showToast("An error occurred while registering. Please try again.")
+                val errorBody = e.response()?.errorBody()?.string()
+                val gson = Gson()
+                val errorResponse: RegisterErrorResponse? = gson.fromJson(errorBody, RegisterErrorResponse::class.java)
+
+                if (errorResponse != null) {
+                    if (errorResponse.username != null) {
+                        errorResponse.username[0]?.let { showToast(it.replaceFirstChar { char -> char.uppercase() }) }
+                    } else if( errorResponse.email != null) {
+                        errorResponse.email[0]?.let { showToast(it.replaceFirstChar { char -> char.uppercase() }) }
+                    }
+                } else {
+                    showToast("An error occurred while registering. Please try again.")
+                }
             }
         }
     }
