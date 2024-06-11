@@ -26,6 +26,9 @@ class ProductRepository(
     private val _createProductResponse = MutableLiveData<Resource<GetProductsResponseItem>?>()
     private val createProductResponse: LiveData<Resource<GetProductsResponseItem>?> = _createProductResponse
 
+    private val _updateProductResponse = MutableLiveData<Resource<GetProductsResponseItem>?>()
+    private val updateProductResponse: LiveData<Resource<GetProductsResponseItem>?> = _updateProductResponse
+
     fun getProducts(): LiveData<Resource<List<GetProductsResponseItem>>?> {
         _products.value = Resource.Loading()
         val client = apiService.getProducts()
@@ -107,6 +110,7 @@ class ProductRepository(
             }
 
             override fun onFailure(call: Call<GetProductsResponseItem>, t: Throwable) {
+                _createProductResponse.value = Resource.Error(t.message.toString())
                 Log.e(TAG, "onFailure: ${t.message}")
             }
         })
@@ -115,7 +119,7 @@ class ProductRepository(
 
     }
 
-    suspend fun updateProduct(
+    fun updateProduct(
         id: String,
         photos: List<MultipartBody.Part>,
         name: RequestBody,
@@ -123,8 +127,33 @@ class ProductRepository(
         stock: RequestBody,
         price: RequestBody,
         description: RequestBody,
-    ): GetProductsResponseItem {
-        return apiService.updateProduct(id, photos, name, category, stock, price, description)
+    ): LiveData<Resource<GetProductsResponseItem>?> {
+        _updateProductResponse.value = Resource.Loading()
+        val client = apiService.updateProduct(id, photos, name, category, stock, price, description)
+        client.enqueue(object : Callback<GetProductsResponseItem> {
+            override fun onResponse(
+                call: Call<GetProductsResponseItem>,
+                response: Response<GetProductsResponseItem>
+            ) {
+                if (response.isSuccessful) {
+                    val responseBody = response.body()
+                    if (responseBody != null) {
+                        _updateProductResponse.value = Resource.Success(responseBody)
+                    }
+                } else {
+                    _updateProductResponse.value = Resource.Error(response.message())
+                    Log.e(TAG, "onFailure: ${response.message()}")
+                }
+            }
+
+            override fun onFailure(call: Call<GetProductsResponseItem>, t: Throwable) {
+                _updateProductResponse.value = Resource.Error(t.message.toString())
+                Log.e(TAG, "onFailure: ${t.message}")
+            }
+        })
+
+        return updateProductResponse
+
     }
 
     suspend fun deleteProduct(productCode: String): DeleteProductResponse {

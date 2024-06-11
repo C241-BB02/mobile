@@ -56,9 +56,30 @@
                 android:layout_margin="16dp"
                 android:fontFamily="@font/rubik_regular"
                 android:text="@string/create_product_image_info"
+                android:textColor="@color/blue_900"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/edit_product_preview_image_button" />
+
+            <TextView
+                android:id="@+id/edit_product_delete_image_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:fontFamily="@font/rubik_regular"
+                android:text="@string/create_product_delete_image_info"
+                android:textColor="@color/blue_900"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_image_info" />
+
+            <TextView
+                android:id="@+id/edit_product_name_input_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="Name"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_delete_image_info" />
 
             <EditText
                 android:id="@+id/edit_product_name_input"
@@ -74,7 +95,17 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_image_info" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_name_input_label" />
+
+            <TextView
+                android:id="@+id/edit_product_description_input_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="Description"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_name_input" />
 
             <EditText
                 android:id="@+id/edit_product_description_input"
@@ -92,7 +123,17 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_name_input" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_description_input_label" />
+
+            <TextView
+                android:id="@+id/edit_product_category_input_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="Category"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_description_input" />
 
             <EditText
                 android:id="@+id/edit_product_category_input"
@@ -108,7 +149,17 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_description_input" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_category_input_label" />
+
+            <TextView
+                android:id="@+id/edit_product_price_input_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="Price"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_category_input" />
 
             <EditText
                 android:id="@+id/edit_product_price_input"
@@ -124,7 +175,17 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_category_input" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_price_input_label" />
+
+            <TextView
+                android:id="@+id/edit_product_stock_input_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:fontFamily="@font/rubik_medium"
+                android:text="Stock"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_price_input" />
 
             <EditText
                 android:id="@+id/edit_product_stock_input"
@@ -140,7 +201,7 @@
                 android:padding="8dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/edit_product_price_input" />
+                app:layout_constraintTop_toBottomOf="@+id/edit_product_stock_input_label" />
 
             <Button
                 android:id="@+id/edit_product_button"

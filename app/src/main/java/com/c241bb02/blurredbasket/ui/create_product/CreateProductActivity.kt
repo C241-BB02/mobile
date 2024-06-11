@@ -317,18 +317,18 @@ class CreateProductActivity : AppCompatActivity() {
             .show()
     }
 
-    private fun moveToEditProductScreen(product: GetProductsResponseItem) {
-        val intent = Intent(this, EditProductActivity::class.java)
-        intent.putExtra(EditProductActivity.EXTRA_PRODUCT, product)
-        startActivity(intent)
-    }
+        private fun moveToEditProductScreen(product: GetProductsResponseItem) {
+            val intent = Intent(this, EditProductActivity::class.java)
+            intent.putExtra(EditProductActivity.EXTRA_PRODUCT, product)
+            startActivity(intent)
+        }
 
-    private fun moveToProductDetailScreen(product: GetProductsResponseItem) {
-        val moveIntent = Intent(this, ProductDetailActivity::class.java)
-        moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
-        moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "create")
-        startActivity(moveIntent)
-    }
+        private fun moveToProductDetailScreen(product: GetProductsResponseItem) {
+            val moveIntent = Intent(this, ProductDetailActivity::class.java)
+            moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
+            moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "create")
+            startActivity(moveIntent)
+        }
 
     private fun moveToProfileScreen() {
         val intent = Intent(this@CreateProductActivity, ProfileActivity::class.java)
@@ -404,7 +404,6 @@ class CreateProductActivity : AppCompatActivity() {
             showToast("You can only pick at most $MAX_IMAGES photos.")
         } else {
             val newImages = ArrayList(uris)
-            Log.d("MOMENT GAS", newImages.toString())
             val startIndex = filledUris.size
             for (index in 0..<newImages.size) {
                 selectedImages[startIndex + index] = newImages[index]

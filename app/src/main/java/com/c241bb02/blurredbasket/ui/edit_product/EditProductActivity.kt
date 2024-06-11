@@ -16,10 +16,13 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.c241bb02.blurredbasket.R
 import com.c241bb02.blurredbasket.api.product.GetProductsResponseItem
+import com.c241bb02.blurredbasket.data.util.Resource
 import com.c241bb02.blurredbasket.databinding.ActivityCreateProductBinding
 import com.c241bb02.blurredbasket.databinding.ActivityEditProductBinding
+import com.c241bb02.blurredbasket.ui.create_product.CreateProductActivity
 import com.c241bb02.blurredbasket.ui.create_product.CreateProductCarouselAdapter
 import com.c241bb02.blurredbasket.ui.create_product.CreateProductViewModel
+import com.c241bb02.blurredbasket.ui.home.HomeActivity
 import com.c241bb02.blurredbasket.ui.product_detail.ProductDetailActivity
 import com.c241bb02.blurredbasket.ui.profile.ProfileActivity
 import com.c241bb02.blurredbasket.ui.utils.createCustomTempFile
@@ -31,6 +34,7 @@ import com.c241bb02.blurredbasket.ui.view_model.ViewModelFactory
 import com.google.android.material.carousel.CarouselLayoutManager
 import com.google.android.material.carousel.CarouselSnapHelper
 import com.google.android.material.carousel.HeroCarouselStrategy
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.platform.MaterialContainerTransform
 import com.google.android.material.transition.platform.MaterialContainerTransformSharedElementCallback
 import com.stfalcon.imageviewer.StfalconImageViewer
@@ -56,7 +60,6 @@ class EditProductActivity : AppCompatActivity() {
     private var downloadedImages = mutableMapOf<String, File>()
 
     private var adapter: EditProductCarouselAdapter? = null
-    private val MAX_IMAGES = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupTransition()
@@ -117,63 +120,235 @@ class EditProductActivity : AppCompatActivity() {
         return product
     }
 
-
     private fun setupButtons() {
         val product = getProductParcelableExtra()
         if (product != null) {
             with(binding) {
                 editProductPreviewImageButton.setOnClickListener {
-                    val images = selectedImages
-                    openImageViewer(images)
+                    val filledUris = selectedImages.filter { it != Uri.EMPTY }
+                    if (filledUris.isEmpty()) {
+                        showToast("You have not selected any images.")
+                    } else {
+                        openImageViewer(selectedImages)
+                    }
                 }
                 editProductButton.setOnClickListener {
-                    val id = product.code
-                    val name = createRequestBody(editProductNameInput.text.toString())
-                    val category = createRequestBody(editProductCategoryInput.text.toString())
-                    val description = createRequestBody(editProductDescriptionInput.text.toString())
-                    val price = createRequestBody(editProductPriceInput.text.toString())
-                    val stock = createRequestBody(editProductStockInput.text.toString())
+                    val nameText = editProductNameInput.text.toString()
+                    val categoryText = editProductCategoryInput.text.toString()
+                    val descriptionText = editProductDescriptionInput.text.toString()
+                    val priceText = editProductPriceInput.text.toString()
+                    val stockText = editProductStockInput.text.toString()
                     val filledUris = selectedImages.filter { it != Uri.EMPTY }
-                    val photoFiles = downloadedImages.filter { true }
-                    val photos = ArrayList(photoFiles.map {
-                        val requestImageFile =
-                            it.value.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                        MultipartBody.Part.createFormData("photos", it.value.name, requestImageFile)
-                    })
-                    val newPhotos =
-                        ArrayList(filledUris.filter { !it.toString().startsWith("http") }.map {
-                            val file = uriToFile(
-                                it,
-                                this@EditProductActivity
-                            )
+
+                    if (editProductPayloadIsValid(
+                            photos = filledUris,
+                            name = nameText,
+                            category = categoryText,
+                            stock = stockText,
+                            price = priceText,
+                            description = descriptionText
+                        )
+                    ) {
+                        val id = product.code
+                        val name = createRequestBody(nameText)
+                        val category = createRequestBody(categoryText)
+                        val description = createRequestBody(descriptionText)
+                        val price = createRequestBody(priceText)
+                        val stock = createRequestBody(stockText)
+
+                        val photoFiles = downloadedImages.filter { true }
+                        val photos = ArrayList(photoFiles.map {
                             val requestImageFile =
-                                file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                            MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
+                                it.value.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                            MultipartBody.Part.createFormData("photos", it.value.name, requestImageFile)
                         })
+                        val newPhotos =
+                            ArrayList(filledUris.filter { !it.toString().startsWith("http") }.map {
+                                val file = uriToFile(
+                                    it,
+                                    this@EditProductActivity
+                                )
+                                val requestImageFile =
+                                    file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                                MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
+                            })
 
-                    photos.addAll(newPhotos)
+                        photos.addAll(newPhotos)
 
-                    lifecycleScope.launch {
-                        try {
-                            viewModel.updateProduct(
-                                id,
-                                photos,
-                                name,
-                                category,
-                                stock,
-                                price,
-                                description
-                            )
-                            showToast("Your product has been updated!")
-                            moveToProfileScreen()
-                        } catch (e: HttpException) {
-                            showToast("An error occurred while updating product. Please try again.")
-                        }
+                        viewModel.updateProduct(id, photos, name, category, stock, price, description)
+                            .observe(this@EditProductActivity) {
+                                when (it) {
+                                    is Resource.Loading -> {
+                                        showLoadingEditProduct()
+                                    }
+
+                                    is Resource.Success -> {
+                                        stopLoadingEditProduct()
+                                        val response = it.data
+                                        if (response != null) {
+                                            val numberOfPasses =
+                                                response.photos.filter { photo -> photo.status != "Blur" }.size
+                                            if (response.status.equals("ACCEPTED")) {
+                                                val message = if (numberOfPasses < response.photos.size)
+                                                    "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
+                                                else
+                                                    "Your product is now live. You can update your product any time from the product detail screen."
+
+                                                showAcceptedDialog(message, product = response)
+
+                                            } else {
+                                                showBannedDialog(numberOfPasses, product = response)
+                                            }
+
+                                        }
+                                    }
+
+                                    is Resource.Error -> {
+                                        stopLoadingEditProduct()
+                                        showErrorDialog()
+                                    }
+
+                                    else -> {
+                                        stopLoadingEditProduct()
+                                        showErrorDialog()
+                                    }
+                                }
+                            }
+
                     }
                 }
             }
         }
     }
+
+
+    private fun editProductPayloadIsValid(
+        photos: List<Uri>,
+        name: String,
+        category: String,
+        stock: String,
+        price: String,
+        description: String,
+    ): Boolean {
+        if (photos.size < 3) {
+            showToast("You must select at least 3 photos.")
+            return false
+        }
+        if (name.isEmpty()) {
+            showToast("You must enter a product name.")
+            return false
+        }
+        if (category.isEmpty()) {
+            showToast("You must enter a product category.")
+            return false
+        }
+        if (stock.toInt() <= 0) {
+            showToast("Product stock must be greater than 0.")
+            return false
+        }
+        if (price.isEmpty()) {
+            showToast("You must enter a product price.")
+            return false
+        }
+        if (price.toInt() < 0) {
+            showToast("Product price cannot be negative.")
+            return false
+        }
+        if (description.isEmpty()) {
+            showToast("You must enter a product category.")
+            return false
+        }
+
+        return true
+    }
+
+    private fun showLoadingEditProduct() {
+        binding.editProductButton.isEnabled = false
+        binding.editProductButton.text = "Editing product..."
+    }
+
+    private fun stopLoadingEditProduct() {
+        binding.editProductButton.isEnabled = true
+        binding.editProductButton.text = "Edit Product"
+    }
+
+    private fun showAcceptedDialog(message: String, product: GetProductsResponseItem) {
+        MaterialAlertDialogBuilder(this@EditProductActivity)
+            .setCancelable(false)
+            .setTitle("Success!")
+            .setMessage(message)
+            .setNeutralButton("Home") { dialog, _ ->
+                moveToHomeScreen()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Profile") { dialog, _ ->
+                moveToProfileScreen()
+                dialog.dismiss()
+            }
+            .setPositiveButton("See My Product") { dialog, _ ->
+                moveToProductDetailScreen(product)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showBannedDialog(numberOfPasses: Int, product: GetProductsResponseItem) {
+        MaterialAlertDialogBuilder(this@EditProductActivity)
+            .setCancelable(false)
+            .setTitle("Whoops!")
+            .setMessage("After reviewing your product, we concluded that your product has not met the standard. A product must have at least 3 non-blurred photos, but you have uploaded $numberOfPasses non-blurred photos. Your product will not be displayed to customers, but you can still see it in your profile screen. You can update your product any time from the product detail screen.")
+            .setNeutralButton("Home") { dialog, _ ->
+                moveToHomeScreen()
+                dialog.dismiss()
+            }
+            .setNegativeButton("See My Product") { dialog, _ ->
+                moveToProductDetailScreen(product)
+                dialog.dismiss()
+            }
+            .setPositiveButton("Update") { dialog, _ ->
+                moveToEditProductScreen(product)
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun showErrorDialog() {
+        MaterialAlertDialogBuilder(this@EditProductActivity)
+            .setCancelable(false)
+            .setTitle("Something went wrong")
+            .setMessage("An error occurred while editing the product.")
+            .setNeutralButton("Home") { dialog, _ ->
+                moveToHomeScreen()
+                dialog.dismiss()
+            }
+            .setNegativeButton("Profile") { dialog, _ ->
+                moveToProfileScreen()
+                dialog.dismiss()
+            }
+            .setPositiveButton("Try again") { dialog, _ ->
+                dialog.dismiss()
+            }
+            .show()
+    }
+
+    private fun moveToEditProductScreen(product: GetProductsResponseItem) {
+        val intent = Intent(this, EditProductActivity::class.java)
+        intent.putExtra(EXTRA_PRODUCT, product)
+        startActivity(intent)
+    }
+
+    private fun moveToProductDetailScreen(product: GetProductsResponseItem) {
+        val moveIntent = Intent(this, ProductDetailActivity::class.java)
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
+        moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "edit")
+        startActivity(moveIntent)
+    }
+
+    private fun moveToHomeScreen() {
+        val intent = Intent(this@EditProductActivity, HomeActivity::class.java)
+        startActivity(intent)
+    }
+
 
     private fun createRequestBody(text: String): RequestBody {
         return text.trim().toRequestBody("text/plain".toMediaType())
@@ -273,7 +448,7 @@ class EditProductActivity : AppCompatActivity() {
             for (index in 0..<newImages.size) {
                 selectedImages[startIndex + index] = newImages[index]
             }
-            adapter?.updateData(startIndex, newImages)
+            adapter?.updateData(0, selectedImages)
             showToast("You have selected ${uris.size} photos.")
         }
     }
@@ -285,5 +460,6 @@ class EditProductActivity : AppCompatActivity() {
 
     companion object {
         const val EXTRA_PRODUCT = "extra_product"
+        private const val MAX_IMAGES = 5
     }
 }

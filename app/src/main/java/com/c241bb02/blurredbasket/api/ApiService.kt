@@ -48,7 +48,7 @@ interface ApiService {
 
     @Multipart
     @PATCH("product/update/{id}/")
-    suspend fun updateProduct(
+    fun updateProduct(
         @Path("id") id: String,
         @Part photos: List<MultipartBody.Part>,
         @Part("name") name: RequestBody,
@@ -56,7 +56,7 @@ interface ApiService {
         @Part("stock") stock: RequestBody,
         @Part("price") price: RequestBody,
         @Part("description") description: RequestBody,
-    ): GetProductsResponseItem
+    ): Call<GetProductsResponseItem>
 
     @DELETE("product/delete/{productCode}/")
     suspend fun deleteProduct(
