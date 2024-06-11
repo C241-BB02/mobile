@@ -49,7 +49,6 @@ class CreateProductActivity : AppCompatActivity() {
         Uri.EMPTY,
     )
     private var adapter: CreateProductCarouselAdapter? = null
-    private val MAX_IMAGES = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupTransition()
@@ -309,5 +308,9 @@ class CreateProductActivity : AppCompatActivity() {
     private fun obtainViewModel(activity: AppCompatActivity): CreateProductViewModel {
         val factory = ViewModelFactory.getInstance(activity.application)
         return ViewModelProvider(activity, factory)[CreateProductViewModel::class.java]
+    }
+
+    companion object {
+        private const val MAX_IMAGES = 5
     }
 }
