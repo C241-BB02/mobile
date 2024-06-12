@@ -25,7 +25,7 @@ class ApiConfig {
                 .addInterceptor(authInterceptor)
                 .build()
             val retrofit = Retrofit.Builder()
-                .baseUrl("https://equal-walleye-funky.ngrok-free.app/api/")
+                .baseUrl("https://api.blurbasket.com/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(client)
                 .build()
