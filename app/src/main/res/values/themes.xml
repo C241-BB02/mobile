@@ -1,9 +1,56 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
+<resources>
     <!-- Base application theme. -->
-    <style name="Base.Theme.BlurredBasket" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.BlurredBasket" parent="Theme.Material3.Light.NoActionBar">
         <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+         <item name="colorPrimary">@color/blue_500</item>
     </style>
 
     <style name="Theme.BlurredBasket" parent="Base.Theme.BlurredBasket" />
+
+    <style name="CustomBottomSheetDialog" parent="Theme.Material3.Light.BottomSheetDialog">
+        <item name="android:backgroundDimAmount">0.7</item>
+    </style>
+
+    <style name="Custom.EditText" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/rounded_white_bg</item>
+        <item name="android:textColor">@color/blue_900</item>
+        <item name="android:fontFamily">@font/rubik_regular</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingTop">10dp</item>
+        <item name="android:paddingBottom">10dp</item>
+        <item name="android:radius">8dp</item>
+    </style>
+
+    <style name="CustomChipFontFamily" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="android:fontFamily">@font/rubik_medium</item>
+    </style>
+
+    <style name="CustomChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/blue_200</item>
+        <item name="android:textColor">@color/blue_50</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
+    </style>
+
+    <style name="ProductCategoryChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/blue_100</item>
+        <item name="android:textColor">@color/blue_900</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
+    </style>
+
+    <style name="ProductStockChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/blue_900</item>
+        <item name="android:textColor">@color/blue_50</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
+    </style>
+
+    <style name="PassImageStatusChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">#66BB6A</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
+    </style>
+
+    <style name="RejectedImageStatusChip" parent="Widget.MaterialComponents.Chip.Filter">
+        <item name="chipBackgroundColor">@color/red</item>
+        <item name="android:textAppearance">@style/CustomChipFontFamily</item>
+    </style>
+
 </resources>

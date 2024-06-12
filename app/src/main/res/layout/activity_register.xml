@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.register.RegisterActivity"
+    android:background="@color/blue_50">
+
+    <ImageButton
+        android:id="@+id/register_back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/rounded_arrow_back_24"
+        android:background="@drawable/back_button_bg"
+        app:tint="@color/blue_900"
+        android:padding="10dp"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/back_button" />
+
+    <LinearLayout
+        android:id="@+id/register_form"
+        android:orientation="vertical"
+        android:background="@drawable/register_account_bg"
+        android:padding="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+        <TextView
+            android:text="@string/register_form_title"
+            android:fontFamily="@font/rubik_medium"
+            android:textColor="@color/blue_900"
+            android:textSize="24sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:text="@string/register_form_description"
+            android:fontFamily="@font/rubik_medium"
+            android:textColor="@color/blue_900"
+            android:textSize="14sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <TextView
+            android:text="I am registering as a..."
+            android:fontFamily="@font/rubik_medium"
+            android:textColor="@color/blue_900"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="10dp" />
+
+        <RadioGroup
+            android:id="@+id/register_role_radio_group"
+            android:checkedButton="@+id/radio_button_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <RadioButton
+                android:id="@+id/register_customer_radio_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/rubik_regular"
+                android:textSize="18dp"
+                android:text="Customer"/>
+            <RadioButton
+                android:id="@+id/register_seller_radio_button"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/rubik_regular"
+                android:textSize="18dp"
+                android:text="Seller"/>
+        </RadioGroup>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <EditText
+            android:id="@+id/register_username_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Custom.EditText"
+            android:inputType="textPersonName"
+            android:hint="Username"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <EditText
+            android:id="@+id/register_email_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Custom.EditText"
+            android:inputType="textEmailAddress"
+            android:hint="@string/email"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <EditText
+            android:id="@+id/register_password_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Custom.EditText"
+            android:inputType="textPassword"
+            android:hint="@string/password"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="18dp" />
+
+        <EditText
+            android:id="@+id/register_confirm_password_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Custom.EditText"
+            android:inputType="textPassword"
+            android:hint="@string/confirm_password"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
+
+        <Button
+            android:id="@+id/register_trigger_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/blue_800"
+            android:text="@string/sign_me_up"
+            android:textSize="16sp"
+            app:cornerRadius="16dp"
+            android:fontFamily="@font/rubik_regular"/>
+    </LinearLayout>
+</RelativeLayout>
