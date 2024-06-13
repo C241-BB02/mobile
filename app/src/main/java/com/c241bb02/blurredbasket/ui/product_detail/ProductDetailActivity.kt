@@ -88,6 +88,7 @@ class ProductDetailActivity : AppCompatActivity() {
                 val adapter = ProductDetailCarouselAdapter(shownImages, isOwnerOfProduct)
 
                 val snapHelper = CarouselSnapHelper()
+                carouselView.onFlingListener = null
                 snapHelper.attachToRecyclerView(carouselView)
                 val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
                 carouselLayoutManager.carouselAlignment = CarouselLayoutManager.ALIGNMENT_CENTER

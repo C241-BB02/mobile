@@ -372,6 +372,7 @@ class CreateProductActivity : AppCompatActivity() {
         adapter = CreateProductCarouselAdapter(selectedImages)
 
         val snapHelper = CarouselSnapHelper()
+        carouselView.onFlingListener = null
         snapHelper.attachToRecyclerView(carouselView)
 
         val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())

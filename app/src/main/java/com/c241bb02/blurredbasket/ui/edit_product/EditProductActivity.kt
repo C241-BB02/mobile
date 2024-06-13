@@ -446,6 +446,7 @@ class EditProductActivity : AppCompatActivity() {
             adapter = EditProductCarouselAdapter(selectedImages)
 
             val snapHelper = CarouselSnapHelper()
+            carouselView.onFlingListener = null
             snapHelper.attachToRecyclerView(carouselView)
 
             val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
