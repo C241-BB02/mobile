@@ -62,7 +62,7 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun setDefaultBackBehavior() {
         onBackPressedDispatcher.addCallback(this) {
-            val previousActivity = intent.getStringExtra(EXTRA_PREVIOUS_ACTIVITY)
+            val previousActivity = getPreviousActivityExtra()
             if (previousActivity == "profile" || previousActivity == "create" || previousActivity == "edit") {
                 moveToProfileScreen()
             } else {
@@ -79,13 +79,14 @@ class ProductDetailActivity : AppCompatActivity() {
     private fun setupImageCarousel() {
         viewModel.getSession().observe(this) { user ->
             val product = getProductParcelableExtra()
+            val previousActivity = getPreviousActivityExtra()
             if (product != null) {
                 val isOwnerOfProduct = product.user?.id == user.id
                 val carouselView = binding.productDetailImageCarousel
                 val shownImages =
                     if (isOwnerOfProduct) product.photos
                     else product.photos.filter { it.status != "Blur" }
-                val adapter = ProductDetailCarouselAdapter(shownImages, isOwnerOfProduct)
+                val adapter = ProductDetailCarouselAdapter(shownImages, isOwnerOfProduct, previousActivity)
 
                 val snapHelper = CarouselSnapHelper()
                 carouselView.onFlingListener = null
@@ -158,15 +159,20 @@ class ProductDetailActivity : AppCompatActivity() {
 
     private fun handleRoleBasedButtons() {
         val product = getProductParcelableExtra()
+        val previousActivity = getPreviousActivityExtra()
 
         viewModel.getSession().observe(this) { user ->
             with(binding) {
-                if (user.role == "CUSTOMER" || product?.user?.id != user.id) {
+                if (previousActivity == "home" || user.role == "CUSTOMER" || product?.user?.id != user.id) {
                     productDetailEditButton.visibility = View.GONE
                     productDetailDeleteButton.visibility = View.GONE
                 }
             }
         }
+    }
+
+    private fun getPreviousActivityExtra(): String? {
+        return intent.getStringExtra(EXTRA_PREVIOUS_ACTIVITY)
     }
 
     private fun openImageViewer(images: List<String>, position: Int) {
