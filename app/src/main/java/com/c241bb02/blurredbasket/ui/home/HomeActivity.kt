@@ -79,16 +79,16 @@ class HomeActivity : AppCompatActivity() {
 
     private fun setupBannerCarousel() {
         val banners = listOf(
-            "https://res.cloudinary.com/dvvccpigs/image/upload/v1718271368/1_z4cyx4.png",
-            "https://res.cloudinary.com/dvvccpigs/image/upload/v1718271368/2_qqkv4j.png",
-            "https://res.cloudinary.com/dvvccpigs/image/upload/v1718271368/3_jkv0el.png",
+            "https://res.cloudinary.com/dvvccpigs/image/upload/v1718273129/1_pk94ek.png",
+            "https://res.cloudinary.com/dvvccpigs/image/upload/v1718272950/2_ayug5x.png",
+            "https://res.cloudinary.com/dvvccpigs/image/upload/v1718272951/3_oa9vfc.png",
             )
 
         val carouselView = binding.homeCarouselRecyclerView
         val adapter = HomeCarouselAdapter(banners)
 
         val snapHelper = CarouselSnapHelper()
-        carouselView.onFlingListener = null
+            carouselView.onFlingListener = null
         snapHelper.attachToRecyclerView(carouselView)
 
         val carouselLayoutManager = CarouselLayoutManager(HeroCarouselStrategy())
