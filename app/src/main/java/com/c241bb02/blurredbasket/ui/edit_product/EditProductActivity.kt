@@ -12,6 +12,8 @@ import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
@@ -61,6 +63,8 @@ class EditProductActivity : AppCompatActivity() {
     private var downloadedImages = mutableMapOf<String, File>()
     private var hasEditedImages = false
 
+
+
     private var adapter: EditProductCarouselAdapter? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,7 +87,7 @@ class EditProductActivity : AppCompatActivity() {
         val product = getProductParcelableExtra()
         with(binding) {
             if (product != null) {
-                downloadCurrentPhotos(product)
+                viewModel.downloadCurrentPhotos(downloadedImages, product, this@EditProductActivity)
 
                 editProductNameInput.setText(product.name)
                 editProductDescriptionInput.setText(product.description)
@@ -148,20 +152,7 @@ class EditProductActivity : AppCompatActivity() {
         }
     }
 
-    private fun downloadCurrentPhotos(product: GetProductsResponseItem) {
-        val scope = CoroutineScope(Dispatchers.Default)
-        scope.launch {
-            product.photos.forEach {
-                try {
-                    val file = urlToFile(it.image, this@EditProductActivity)
-                    downloadedImages[it.image] = file
-                    Log.d("SUCCESS DOWNLOAD", file.absolutePath)
-                } catch (e: IOException) {
-                    Log.d("EDIT ERROR", e.toString())
-                }
-            }
-        }
-    }
+
 
     private fun getProductParcelableExtra(): GetProductsResponseItem? {
         val product = if (Build.VERSION.SDK_INT >= 33) {
@@ -219,24 +210,41 @@ class EditProductActivity : AppCompatActivity() {
                             photos = ArrayList(photoFiles.map {
                                 val requestImageFile =
                                     it.value.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                                MultipartBody.Part.createFormData("photos", it.value.name, requestImageFile)
+                                MultipartBody.Part.createFormData(
+                                    "photos",
+                                    it.value.name,
+                                    requestImageFile
+                                )
                             })
                             val newPhotos =
-                                ArrayList(filledUris.filter { !it.toString().startsWith("http") }.map {
-                                    val file = uriToFile(
-                                        it,
-                                        this@EditProductActivity
-                                    )
-                                    val requestImageFile =
-                                        file.asRequestBody("image/jpeg".toMediaTypeOrNull())
-                                    MultipartBody.Part.createFormData("photos", file.name, requestImageFile)
-                                })
+                                ArrayList(filledUris.filter { !it.toString().startsWith("http") }
+                                    .map {
+                                        val file = uriToFile(
+                                            it,
+                                            this@EditProductActivity
+                                        )
+                                        val requestImageFile =
+                                            file.asRequestBody("image/jpeg".toMediaTypeOrNull())
+                                        MultipartBody.Part.createFormData(
+                                            "photos",
+                                            file.name,
+                                            requestImageFile
+                                        )
+                                    })
 
                             photos.addAll(newPhotos)
                         }
 
 
-                        viewModel.updateProduct(id, photos, name, category, stock, price, description)
+                        viewModel.updateProduct(
+                            id,
+                            photos,
+                            name,
+                            category,
+                            stock,
+                            price,
+                            description
+                        )
                             .observe(this@EditProductActivity) {
                                 when (it) {
                                     is Resource.Loading -> {
@@ -250,10 +258,11 @@ class EditProductActivity : AppCompatActivity() {
                                             val numberOfPasses =
                                                 response.photos.filter { photo -> photo.status != "Blur" }.size
                                             if (response.status == "ACCEPTED") {
-                                                val message = if (numberOfPasses < response.photos.size)
-                                                    "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
-                                                else
-                                                    "Your product is now live. You can update your product any time from the product detail screen."
+                                                val message =
+                                                    if (numberOfPasses < response.photos.size)
+                                                        "Your product is now live. However, after reviewing your product, ${response.photos.size - numberOfPasses} photos are blurred. These photos won't be shown to customers, but you can still see them by opening this product from your profile screen. You can update your product any time from the product detail screen."
+                                                    else
+                                                        "Your product is now live. You can update your product any time from the product detail screen."
 
                                                 showAcceptedDialog(message, product = response)
 
@@ -293,6 +302,10 @@ class EditProductActivity : AppCompatActivity() {
     ): Boolean {
         if (photos.size < 3) {
             showToast("You must select at least 3 photos.")
+            return false
+        }
+        if (photos.size > 6) {
+            showToast("You can only select up to 5 photos.")
             return false
         }
         if (name.isEmpty()) {
@@ -351,16 +364,12 @@ class EditProductActivity : AppCompatActivity() {
             .setCancelable(false)
             .setTitle("Success!")
             .setMessage(message)
-            .setNeutralButton("Home") { dialog, _ ->
+            .setNegativeButton("Home") { dialog, _ ->
                 moveToHomeScreen()
                 dialog.dismiss()
             }
-            .setNegativeButton("Profile") { dialog, _ ->
+            .setPositiveButton("Profile") { dialog, _ ->
                 moveToProfileScreen()
-                dialog.dismiss()
-            }
-            .setPositiveButton("See My Product") { dialog, _ ->
-                moveToProductDetailScreen(product)
                 dialog.dismiss()
             }
             .show()
@@ -371,16 +380,12 @@ class EditProductActivity : AppCompatActivity() {
             .setCancelable(false)
             .setTitle("Whoops!")
             .setMessage("After reviewing your product, we concluded that your product has not met the standard. A product must have at least 3 non-blurred photos, but you have uploaded $numberOfPasses non-blurred photos. Your product will not be displayed to customers, but you can still see it in your profile screen. You can update your product any time from the product detail screen.")
-            .setNeutralButton("Home") { dialog, _ ->
+            .setNegativeButton("Home") { dialog, _ ->
                 moveToHomeScreen()
                 dialog.dismiss()
             }
-            .setNegativeButton("See My Product") { dialog, _ ->
-                moveToProductDetailScreen(product)
-                dialog.dismiss()
-            }
-            .setPositiveButton("Update") { dialog, _ ->
-                moveToEditProductScreen(product)
+            .setPositiveButton("Profile") { dialog, _ ->
+                moveToProfileScreen()
                 dialog.dismiss()
             }
             .show()
@@ -403,19 +408,6 @@ class EditProductActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
             .show()
-    }
-
-    private fun moveToEditProductScreen(product: GetProductsResponseItem) {
-        val intent = Intent(this, EditProductActivity::class.java)
-        intent.putExtra(EXTRA_PRODUCT, product)
-        startActivity(intent)
-    }
-
-    private fun moveToProductDetailScreen(product: GetProductsResponseItem) {
-        val moveIntent = Intent(this, ProductDetailActivity::class.java)
-        moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
-        moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "edit")
-        startActivity(moveIntent)
     }
 
     private fun moveToHomeScreen() {
@@ -445,6 +437,14 @@ class EditProductActivity : AppCompatActivity() {
             val carouselView = binding.editProductImageCarousel
             adapter = EditProductCarouselAdapter(selectedImages)
 
+            viewModel.isLoading.observe(this) {
+                if (it) {
+                    startSkeletonLoader()
+                } else {
+                    stopSkeletonLoader()
+                }
+            }
+
             val snapHelper = CarouselSnapHelper()
             carouselView.onFlingListener = null
             snapHelper.attachToRecyclerView(carouselView)
@@ -470,6 +470,24 @@ class EditProductActivity : AppCompatActivity() {
             }
             )
         }
+    }
+
+    private fun startSkeletonLoader() {
+        binding.editProductImageCarousel.visibility = View.INVISIBLE
+        binding.editProductCarouselShimmerLayout.apply {
+            visibility = View.VISIBLE
+            startShimmer()
+        }
+        binding.editProductButton.isEnabled = false
+    }
+
+    private fun stopSkeletonLoader() {
+        binding.editProductImageCarousel.visibility = View.VISIBLE
+        binding.editProductCarouselShimmerLayout.apply {
+            visibility = View.GONE
+            stopShimmer()
+        }
+        binding.editProductButton.isEnabled = true
     }
 
     private fun openImageViewer(images: List<Uri>) {

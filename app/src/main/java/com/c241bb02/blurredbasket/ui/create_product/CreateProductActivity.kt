@@ -286,16 +286,12 @@ class CreateProductActivity : AppCompatActivity() {
             .setCancelable(false)
             .setTitle("Success!")
             .setMessage(message)
-            .setNeutralButton("Home") { dialog, _ ->
+            .setNegativeButton("Home") { dialog, _ ->
                 moveToHomeScreen()
                 dialog.dismiss()
             }
-            .setNegativeButton("Profile") { dialog, _ ->
+            .setPositiveButton("Profile") { dialog, _ ->
                 moveToProfileScreen()
-                dialog.dismiss()
-            }
-            .setPositiveButton("See My Product") { dialog, _ ->
-                moveToProductDetailScreen(product)
                 dialog.dismiss()
             }
             .show()
@@ -306,16 +302,12 @@ class CreateProductActivity : AppCompatActivity() {
             .setCancelable(false)
             .setTitle("Whoops!")
             .setMessage("After reviewing your product, we concluded that your product has not met the standard. A product must have at least 3 non-blurred photos, but you have uploaded $numberOfPasses non-blurred photos. Your product will not be displayed to customers, but you can still see it in your profile screen. You can update your product any time from the product detail screen.")
-            .setNeutralButton("Home") { dialog, _ ->
+            .setNegativeButton("Home") { dialog, _ ->
                 moveToHomeScreen()
                 dialog.dismiss()
             }
-            .setNegativeButton("See My Product") { dialog, _ ->
-                moveToProductDetailScreen(product)
-                dialog.dismiss()
-            }
-            .setPositiveButton("Update") { dialog, _ ->
-                moveToEditProductScreen(product)
+            .setPositiveButton("Profile") { dialog, _ ->
+                moveToProfileScreen()
                 dialog.dismiss()
             }
             .show()
@@ -339,19 +331,6 @@ class CreateProductActivity : AppCompatActivity() {
             }
             .show()
     }
-
-        private fun moveToEditProductScreen(product: GetProductsResponseItem) {
-            val intent = Intent(this, EditProductActivity::class.java)
-            intent.putExtra(EditProductActivity.EXTRA_PRODUCT, product)
-            startActivity(intent)
-        }
-
-        private fun moveToProductDetailScreen(product: GetProductsResponseItem) {
-            val moveIntent = Intent(this, ProductDetailActivity::class.java)
-            moveIntent.putExtra(ProductDetailActivity.EXTRA_PRODUCT, product)
-            moveIntent.putExtra(ProductDetailActivity.EXTRA_PREVIOUS_ACTIVITY, "create")
-            startActivity(moveIntent)
-        }
 
     private fun moveToProfileScreen() {
         val intent = Intent(this@CreateProductActivity, ProfileActivity::class.java)
